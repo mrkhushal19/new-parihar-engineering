@@ -1,0 +1,19 @@
+{
+  "name": "new-parihar-engineering-works",
+  "version": "1.0.0",
+  "description": "Professional website and management portal for New Parihar Engineering Works",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "morgan": "^1.10.0",
+    "multer": "^2.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

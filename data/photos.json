@@ -1,0 +1,38 @@
+[
+  {
+    "id": "pic-1",
+    "url": "/images/block_cutter_6ft.png",
+    "caption": "6 Feet Pillar Block Cutter",
+    "category": "Granite Processing Installation"
+  },
+  {
+    "id": "pic-2",
+    "url": "/images/cnc_router_3axis.png",
+    "caption": "Stone CNC Router Machine",
+    "category": "Precision carving head"
+  },
+  {
+    "id": "pic-3",
+    "url": "/images/crane_double_girder.png",
+    "caption": "Double Girder Crane",
+    "category": "Span: 20m, 30 Ton Capacity"
+  },
+  {
+    "id": "pic-4",
+    "url": "/images/crane_gantry_double.png",
+    "caption": "Double Beam Gantry Crane",
+    "category": "Outdoor stone block yard"
+  },
+  {
+    "id": "pic-5",
+    "url": "/images/block_cutter_6ft.png",
+    "caption": "Manufacturing Yard",
+    "category": "Pillar block assembly units"
+  },
+  {
+    "id": "pic-6",
+    "url": "/images/cnc_router_3axis.png",
+    "caption": "Finished CNC Router",
+    "category": "Pre-dispatch final checks"
+  }
+]

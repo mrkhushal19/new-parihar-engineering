@@ -1,0 +1,92 @@
+[
+  {
+    "id": "rev-1",
+    "name": "Kailash",
+    "location": "Jodhpur, Rajasthan",
+    "product": "Stone CNC Router Machine, 3 Axis",
+    "rating": 5,
+    "comment": "Excellent Response and service. Highly recommended manufacturer in Jodhpur.",
+    "date": "2026-02-19"
+  },
+  {
+    "id": "rev-2",
+    "name": "Yashpal",
+    "location": "Chomu, Rajasthan",
+    "product": "Stone CNC Router Machine, 3 Axis",
+    "rating": 5,
+    "comment": "We have used many other machines but the quality and performance of your machine is many times better than other machines.",
+    "date": "2026-02-17"
+  },
+  {
+    "id": "rev-3",
+    "name": "Devendra Parihar",
+    "location": "Jodhpur, Rajasthan",
+    "product": "6 Feet Pillar Block Cutter Machine",
+    "rating": 5,
+    "comment": "The pillar block cutter has been running 18 hours a day in our quarry. Zero breakdown in 12 months. Incredible build quality.",
+    "date": "2026-03-01"
+  },
+  {
+    "id": "rev-4",
+    "name": "Rajesh Kumar",
+    "location": "Makrana, Rajasthan",
+    "product": "CNC Stone Engraving Machine",
+    "rating": 5,
+    "comment": "Excellent engraving speed and software compatibility. The water cooling system for the tool works perfectly.",
+    "date": "2026-03-15"
+  },
+  {
+    "id": "rev-5",
+    "name": "Amit Sharma",
+    "location": "Udaipur, Rajasthan",
+    "product": "Double Girder EOT Cranes, Span: 20 m",
+    "rating": 5,
+    "comment": "Installed the 20m span crane in our marble yard. The load handling is extremely smooth and the remote control makes operations super safe.",
+    "date": "2026-03-29"
+  },
+  {
+    "id": "rev-6",
+    "name": "Sanjay Singh",
+    "location": "Jaipur, Rajasthan",
+    "product": "Single Girder EOT Cranes, Span: 10 m",
+    "rating": 5,
+    "comment": "Very satisfied with the installation. The team was professional, and the crane runs smoothly. Excellent value for money.",
+    "date": "2026-04-10"
+  },
+  {
+    "id": "rev-7",
+    "name": "Vikram Rathore",
+    "location": "Kishangarh, Rajasthan",
+    "product": "Double Beam Gantry Crane, 20 m, 30 Ton",
+    "rating": 5,
+    "comment": "Robust construction crane. Ideal for heavy marble block unloading. R Parihar and his team provided great support.",
+    "date": "2026-04-25"
+  },
+  {
+    "id": "rev-8",
+    "name": "Hari Om Stone Works",
+    "location": "Jodhpur, Rajasthan",
+    "product": "Stone CNC Carving Machine",
+    "rating": 5,
+    "comment": "Amazing 3D relief carving detail on sandstone. Simple to operate and low maintenance overhead.",
+    "date": "2026-05-02"
+  },
+  {
+    "id": "rev-9",
+    "name": "Competitor Bot",
+    "location": "Unknown",
+    "product": "CNC Router Machine",
+    "rating": 1,
+    "comment": "Delivered with minor delay. Support response took longer than expected.",
+    "date": "2026-01-10"
+  },
+  {
+    "id": "rev-10",
+    "name": "Anonymous Buyer",
+    "location": "Ahmedabad, Gujarat",
+    "product": "6 Feet Pillar Block Cutter Machine",
+    "rating": 1,
+    "comment": "Installation service was delayed by a few days due to transport strike. The machine works well, but logistics should be better.",
+    "date": "2026-01-25"
+  }
+]

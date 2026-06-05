@@ -1,0 +1,34 @@
+[
+  {
+    "id": "vid-1",
+    "title": "CNC Stone Engraving Machine",
+    "duration": "Duration: 2:45 Mins",
+    "description": "Watch our dual-spindle CNC engraver execute micro-detailed lettering on Rajasthan sandstone.",
+    "thumbnail": "/images/cnc_router_3axis.png",
+    "url": "cnc_stone_demo.mp4"
+  },
+  {
+    "id": "vid-2",
+    "title": "Double Girder EOT Cranes",
+    "duration": "Duration: 4:12 Mins",
+    "description": "Live load testing and horizontal alignment check of a 20-meter span crane at stone yard.",
+    "thumbnail": "/images/crane_double_girder.png",
+    "url": "crane_test.mp4"
+  },
+  {
+    "id": "vid-3",
+    "title": "Stone CNC Router Machine",
+    "duration": "Duration: 3:30 Mins",
+    "description": "Countertop profiling and 3D relief carving setup on high-grade granite slabs.",
+    "thumbnail": "/images/cnc_router_3axis.png",
+    "url": "cnc_installation.mp4"
+  },
+  {
+    "id": "vid-4",
+    "title": "Stone CNC Carving Machine",
+    "duration": "Duration: 5:02 Mins",
+    "description": "Watch 3D sculpture machining using customized rotary attachments on marble columns.",
+    "thumbnail": "/images/cnc_router_3axis.png",
+    "url": "cnc_carving.mp4"
+  }
+]

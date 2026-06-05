@@ -1,0 +1,320 @@
+[
+  {
+    "id": "block-cutter-6ft",
+    "name": "6 Feet Pillar Block Cutter Machine",
+    "category": "Block Cutting Machine",
+    "description": "A robust, high-precision pillar-type block cutting machine designed for cutting granite, marble, and sandstone blocks. The heavy-duty cast iron pillars ensure maximum stability and zero vibration during high-speed cutting operations.",
+    "image": "/images/block_cutter_6ft.png",
+    "specifications": {
+      "Blade Capacity": "650 mm (26 inches) to 1200 mm",
+      "Motor Power": "20 HP (14.9 kW)",
+      "Max Cutting Depth": "450 mm",
+      "Power Supply": "3-Phase, 415 V, 50 Hz",
+      "Table Size": "3000 x 1800 mm",
+      "Weight": "4.5 Tons"
+    },
+    "features": [
+      "Heavy-duty oil-bathed guide pillars for smooth vertical movement",
+      "Automatic water-feeding system to keep the blade cool and suppress dust",
+      "Microprocessor-controlled automatic slab thickness indexing",
+      "Highly durable cast iron frame structure for longevity"
+    ],
+    "applications": [
+      "Granite slab manufacturing",
+      "Marble block dressing",
+      "Sandstone block sizing",
+      "Industrial stone cutting workshops"
+    ],
+    "images": [
+      "/images/block_cutter_6ft.png"
+    ]
+  },
+  {
+    "id": "block-cutter-7ft",
+    "name": "7 Feet Pillar Block Cutter Machine",
+    "category": "Block Cutting Machine",
+    "description": "An intermediate, high-performance stone block cutter featuring a reinforced dual-pillar design and a 25 HP main motor. It is perfectly optimized for mid-to-large sized processing units seeking high output with lower power consumption.",
+    "image": "/images/block_cutter_7ft.png",
+    "specifications": {
+      "Blade Capacity": "1800 mm",
+      "Motor Power": "25 HP (18.6 kW)",
+      "Max Cutting Depth": "700 mm",
+      "Power Supply": "3-Phase, 415 V, 50 Hz",
+      "Table Size": "3200 x 2000 mm",
+      "Weight": "5.8 Tons"
+    },
+    "features": [
+      "Rigid crossbeam design to prevent alignment errors",
+      "Variable frequency drive (VFD) for adjustable blade speeds",
+      "Touchscreen Human-Machine Interface (HMI) for operation monitoring",
+      "Rust-resistant coated components for wet environments"
+    ],
+    "applications": [
+      "Heavy stone slab slicing",
+      "Custom monument block shaping",
+      "Limestone sizing in processing units"
+    ],
+    "images": [
+      "/images/block_cutter_7ft.png"
+    ]
+  },
+  {
+    "id": "block-cutter-8ft",
+    "name": "8 Feet Pillar Block Cutter Machine",
+    "category": "Block Cutting Machine",
+    "description": "Our flagship block cutter featuring massive 8-foot structural capacity, a high-torque 30 HP motor, and advanced hydraulic horizontal cutting systems. Engineered to handle the hardest granite blocks with effortless precision.",
+    "image": "/images/block_cutter_8ft.png",
+    "specifications": {
+      "Blade Capacity": "2200 mm",
+      "Motor Power": "30 HP (22.4 kW)",
+      "Max Cutting Depth": "950 mm",
+      "Power Supply": "3-Phase, 415 V, 50 Hz",
+      "Table Size": "3500 x 2200 mm",
+      "Weight": "7.5 Tons"
+    },
+    "features": [
+      "Hydraulic power unit for high-speed cutting feed",
+      "Laser line guide alignment system for perfect cut accuracy",
+      "Dual vertical pillars with chrome-plated finish to resist wear",
+      "Automatic block-end sensor to stop operation upon completion"
+    ],
+    "applications": [
+      "Extra-large block slabbing",
+      "Infrastructure construction stone processing",
+      "Mining quarry slab production lines"
+    ],
+    "images": [
+      "/images/block_cutter_8ft.png"
+    ]
+  },
+  {
+    "id": "cnc-router-3axis",
+    "name": "Stone CNC Router Machine, 3 Axis",
+    "category": "CNC Machines",
+    "description": "A high-precision 3-axis CNC router built specifically for stone fabrication. Features a heavy-duty water cooling system for the spindle and a fully welded steel gantry to maintain accuracy under heavy stone load.",
+    "image": "/images/cnc_router_3axis.png",
+    "specifications": {
+      "Working Area (X x Y x Z)": "1300 x 2500 x 300 mm",
+      "Spindle Power": "5.5 kW Water Cooled",
+      "Control System": "DSP controller / NC Studio",
+      "Transmission": "X/Y Axis Helical Rack & Pinion, Z Axis Ball Screw",
+      "Maximum Speed": "20,000 mm/min",
+      "Drive System": "Stepper Motor / Hybrid Servo"
+    },
+    "features": [
+      "T-slot aluminum table with protective PVC layer and water tank",
+      "Double water cooling nozzles for tool longevity",
+      "Dustproof and waterproof design on all axes to protect guides",
+      "Resume print memory function after power failure"
+    ],
+    "applications": [
+      "3D stone carving and reliefs",
+      "Kitchen countertop edge profile carving",
+      "Tombstone engraving and lettering",
+      "Architectural moldings and panels"
+    ],
+    "images": [
+      "/images/cnc_router_3axis.png"
+    ]
+  },
+  {
+    "id": "cnc-stone-engraving",
+    "name": "CNC Stone Engraving Machine",
+    "category": "CNC Machines",
+    "description": "A specialized engraving setup optimal for lettering, drawing, and shallow engraving on stones like marble, granite, tiles, and slate. Combines affordability with heavy-duty construction.",
+    "image": "/images/cnc_stone_engraving.png",
+    "specifications": {
+      "Working Area": "1200 x 1800 x 200 mm",
+      "Spindle Power": "3.2 kW / 4.5 kW",
+      "Spindle Speed": "0 - 24,000 RPM",
+      "Bed Frame": "Thick walled square steel tubes",
+      "Lubrication": "Manual central lubrication system",
+      "Spindle Cooling": "High-flow water pump system"
+    },
+    "features": [
+      "High accuracy square guide rails",
+      "Heavy load bearing frame structure with rust prevention painting",
+      "DSP handheld controller for offline operations",
+      "Compatible with Type3, Artcam, and JDpaint software"
+    ],
+    "applications": [
+      "Nameplates and memorial plaques",
+      "Wall mural engraving",
+      "Decorative tile pattern carving"
+    ],
+    "images": [
+      "/images/cnc_stone_engraving.png"
+    ]
+  },
+  {
+    "id": "cnc-router-basic",
+    "name": "CNC Router Machine",
+    "category": "CNC Machines",
+    "description": "A versatile CNC router capable of processing wood, MDF, acrylics, soft metals, and stone. Features a hybrid vacuum table and t-slot design, making it the perfect multi-utility machine for mixed fabrication workshops.",
+    "image": "/images/cnc_router_basic.png",
+    "specifications": {
+      "Working Area": "1300 x 2500 x 200 mm",
+      "Spindle Power": "4.5 kW Air/Water Cooled",
+      "Table Type": "Hybrid Vacuum & T-Slot",
+      "Inverter": "5.5 kW Fuling Inverter",
+      "Frame": "Seamless welded steel structure"
+    },
+    "features": [
+      "Vaccum pump suction for easy wood/acrylic clamping",
+      "Auxiliary T-slots for mechanical clamping of heavy stone pieces",
+      "Highly responsive limit switches on all axes for safety",
+      "Automatic tool sensor calibrator included"
+    ],
+    "applications": [
+      "Wooden door and cabinet carving",
+      "Hybrid wood-stone furniture design",
+      "Advertising sign boards and 3D letters"
+    ],
+    "images": [
+      "/images/cnc_router_basic.png"
+    ]
+  },
+  {
+    "id": "cnc-carving-stone",
+    "name": "Stone CNC Carving Machine",
+    "category": "CNC Machines",
+    "description": "An advanced CNC machine optimized for high-depth 3D carvings, sculpture works, and pillar designs. Comes with optional rotary axes for machining cylinders and pillars.",
+    "image": "/images/cnc_carving_stone.png",
+    "specifications": {
+      "Working Area": "1500 x 3000 x 400 mm",
+      "Spindle Power": "7.5 kW high-torque spindle",
+      "Rotary Axis": "Optional, 300 mm diameter",
+      "Motor": "Leadshine Easy Servo Motor & Driver",
+      "Max Spindle Speed": "18,000 RPM"
+    },
+    "features": [
+      "High clearance Z-axis for thick block processing",
+      "Optional heavy-duty rotary axis for carving pillar statues",
+      "Cast steel structure frame for heavy duty shock absorption",
+      "Industrial water cooling system with digital temp display"
+    ],
+    "applications": [
+      "Temple pillar and column carving",
+      "3D stone statues and busts",
+      "Large scale landscaping stone work"
+    ],
+    "images": [
+      "/images/cnc_carving_stone.png"
+    ]
+  },
+  {
+    "id": "crane-double-girder",
+    "name": "Double Girder EOT Cranes, Span: 20 m",
+    "category": "Crane",
+    "description": "Heavy-duty overhead crane featuring a double girder design for high load capacities and long spans. Ideal for heavy machinery handling, factories, steel mills, and heavy stone yards where safe and smooth lifting is critical.",
+    "image": "/images/crane_double_girder.png",
+    "specifications": {
+      "Lifting Capacity": "5 to 50 Tons",
+      "Span": "20 meters",
+      "Lifting Height": "12 to 18 meters",
+      "Travel Speed": "10 - 20 m/min (VF Control)",
+      "Duty Class": "Class II / Class III (M5 / M6 IS-807)",
+      "Control": "Cabin control or wireless radio remote control"
+    },
+    "features": [
+      "Double beam box-type girders with computerized deflection analysis",
+      "Low headroom design for maximum space utilization under roof",
+      "Variable frequency drives (VFD) for micro-speeds and smooth hoisting",
+      "Full-length platforms with handrails on both sides of girders for maintenance access"
+    ],
+    "applications": [
+      "Heavy block lifting in stone cutting yards",
+      "Steel fabrications workshop material shifting",
+      "Heavy equipment assembly lines"
+    ],
+    "images": [
+      "/images/crane_double_girder.png"
+    ]
+  },
+  {
+    "id": "crane-single-girder",
+    "name": "Single Girder EOT Cranes, Span: 10 m",
+    "category": "Crane",
+    "description": "Cost-effective, highly efficient, and light-weight crane system for smaller factories and workshops. The single girder design provides compact headroom while delivering exceptional stability.",
+    "image": "/images/crane_single_girder.png",
+    "specifications": {
+      "Lifting Capacity": "1 to 15 Tons",
+      "Span": "10 meters",
+      "Lifting Height": "6 to 10 meters",
+      "Cross Travel Speed": "5 - 15 m/min",
+      "Duty Class": "Class II (M4 IS-807)",
+      "Control": "Pendant control switch or wireless remote"
+    },
+    "features": [
+      "Optimized structural design for minimal wheel load on factory gantry",
+      "Compact wire rope hoist for maximized hook approaches",
+      "Thermal overload protection for hoist motors",
+      "Anti-fall safety locks on end carriages"
+    ],
+    "applications": [
+      "Light manufacturing assembly lines",
+      "Machine shop maintenance and tooling setup",
+      "Warehouse material loading and unloading"
+    ],
+    "images": [
+      "/images/crane_single_girder.png"
+    ]
+  },
+  {
+    "id": "crane-gantry-double",
+    "name": "Double Beam Gantry Crane, 20 m, 30 Ton",
+    "category": "Industrial Crane",
+    "description": "Self-supporting outdoor gantry crane designed for stone processing yards, ports, and construction sites. Eliminates the need for overhead building runways, operating directly on floor-level rails.",
+    "image": "/images/crane_gantry_double.png",
+    "specifications": {
+      "Lifting Capacity": "30 Tons",
+      "Span": "20 meters",
+      "Lifting Height": "10 meters",
+      "Leg Design": "A-Frame / L-Frame heavy structural columns",
+      "Power Supply": "Cable drag chain / Busbar system",
+      "Travel Rails": "Standard CR70/CR80 rails"
+    },
+    "features": [
+      "Wind speed alarm sensor for outdoor operation safety",
+      "Heavy-duty long-travel motors with electro-hydraulic thruster brakes",
+      "Walkway platforms on legs and beams for safe inspections",
+      "Rain protection covers for hoisting trolley and motor"
+    ],
+    "applications": [
+      "Unloading raw blocks from transport trucks",
+      "Stockpile yard block management",
+      "Infrastructure fabrication yards"
+    ],
+    "images": [
+      "/images/crane_gantry_double.png"
+    ]
+  },
+  {
+    "id": "crane-overhead",
+    "name": "Overhead Crane",
+    "category": "Factory Crane",
+    "description": "Custom-designed factory overhead crane system built to fit specific workspace constraints. Built in compliance with international lifting standards, optimizing load handling and workspace footprint.",
+    "image": "/images/crane_overhead.png",
+    "specifications": {
+      "Lifting Capacity": "1 to 30 Tons",
+      "Span": "Customizable (8m to 25m)",
+      "Lifting Height": "Customizable",
+      "Control System": "VFD control with soft-start functionality",
+      "Structure": "Box girder / I-beam"
+    },
+    "features": [
+      "Tailor-made to fit low ceilings or obstruction-heavy warehouses",
+      "Precision step-less acceleration for fragile loads",
+      "Fail-safe electro-magnetic brakes on hoist and travel",
+      "LED load weight display screen on girder (optional)"
+    ],
+    "applications": [
+      "General manufacturing storage facilities",
+      "Paper and textile production plants",
+      "Automotive components lifting"
+    ],
+    "images": [
+      "/images/crane_overhead.png"
+    ]
+  }
+]

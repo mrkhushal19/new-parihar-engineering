@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Portal | New Parihar Engineering Works</title>
+  <meta name="robots" content="noindex, nofollow">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="admin-body">
+
+  <!-- ADMIN LOGIN SECURITY OVERLAY -->
+  <div class="admin-login-overlay" id="admin-login-overlay">
+    <div class="login-card">
+      <div class="login-logo">P</div>
+      <h2 style="font-family: var(--font-display); margin-bottom: 8px;">Staff Authentication</h2>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 24px;">New Parihar Engineering Works - Admin Portal</p>
+      
+      <form id="admin-login-form">
+        <div class="form-input-group" style="margin-bottom: 20px; text-align: left;">
+          <label for="admin-password-input" style="margin-bottom: 6px; display: block;">Enter Security Password</label>
+          <input type="password" id="admin-password-input" required placeholder="••••••••" style="width: 100%; text-align: center; letter-spacing: 0.2em; font-size: 1.1rem; padding: 12px;">
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;"><i class="fa-solid fa-lock-open"></i> Unlock Dashboard</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Header -->
+  <div class="admin-header">
+    <div class="admin-logo">
+      <div class="logo-icon" style="box-shadow: none;">P</div>
+      <div class="logo-text">
+        <h1 style="font-size: 1.15rem;">New Parihar Admin</h1>
+        <span style="font-size: 0.65rem; color: var(--accent);">Management Portal</span>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap: 16px;">
+      <a href="/index.html" class="btn btn-secondary" style="font-size: 0.85rem; padding: 6px 14px;"><i class="fa-solid fa-arrow-left-long"></i> Back to Site</a>
+      <button class="btn btn-outline" style="font-size: 0.85rem; padding: 6px 14px;" onclick="adminLogout()"><i class="fa-solid fa-power-off"></i> Logout</button>
+    </div>
+  </div>
+
+  <!-- Admin Grid Layout -->
+  <div class="admin-grid">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar">
+      <ul class="admin-menu">
+        <li class="admin-menu-item active" data-target="inquiries-sec" onclick="switchAdminSection('inquiries-sec')">
+          <i class="fa-solid fa-inbox" style="margin-right: 10px; width: 20px;"></i> Customer Inquiries
+        </li>
+        <li class="admin-menu-item" data-target="products-sec" onclick="switchAdminSection('products-sec')">
+          <i class="fa-solid fa-industry" style="margin-right: 10px; width: 20px;"></i> Manage Products
+        </li>
+        <li class="admin-menu-item" data-target="reviews-sec" onclick="switchAdminSection('reviews-sec')">
+          <i class="fa-solid fa-star-half-stroke" style="margin-right: 10px; width: 20px;"></i> Review Moderation
+        </li>
+        <li class="admin-menu-item" data-target="about-sec" onclick="switchAdminSection('about-sec')">
+          <i class="fa-solid fa-circle-info" style="margin-right: 10px; width: 20px;"></i> Manage About Us
+        </li>
+        <li class="admin-menu-item" data-target="videos-sec" onclick="switchAdminSection('videos-sec')">
+          <i class="fa-solid fa-video" style="margin-right: 10px; width: 20px;"></i> Manage Videos
+        </li>
+        <li class="admin-menu-item" data-target="photos-sec" onclick="switchAdminSection('photos-sec')">
+          <i class="fa-solid fa-images" style="margin-right: 10px; width: 20px;"></i> Manage Gallery
+        </li>
+        <li class="admin-menu-item" data-target="contact-sec" onclick="switchAdminSection('contact-sec')">
+          <i class="fa-solid fa-address-book" style="margin-right: 10px; width: 20px;"></i> Manage Contact Us
+        </li>
+      </ul>
+      <div style="margin-top: 60px; padding: 16px; background-color: var(--bg-card); border-radius: 8px; border: 1px solid var(--border-color); font-size: 0.8rem; color: var(--text-secondary);">
+        <i class="fa-solid fa-info-circle" style="color:var(--accent); margin-bottom:8px; display:block; font-size: 1rem;"></i>
+        Logged in as administrator. Any changes made here directly write to the local JSON databases in real time.
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+      
+      <!-- INQUIRIES SECTION -->
+      <section id="inquiries-sec" class="admin-section active">
+        <div class="admin-title-row">
+          <div>
+            <h2 style="font-size: 1.75rem; font-family: var(--font-display);">Customer Lead Inquiries</h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">Manage buying requests, quotes, and phone callbacks from Jodhpur and other regions.</p>
+          </div>
+          <button class="btn btn-primary" onclick="loadInquiries()"><i class="fa-solid fa-rotate"></i> Refresh Leads</button>
+        </div>
+
+        <!-- Inquiries Stats Cards -->
+        <div class="admin-stats-row">
+          <div class="admin-stat-card accent-card">
+            <div class="admin-stat-info">
+              <h5>Total Inquiries</h5>
+              <div class="admin-stat-num" id="stat-total-inq">0</div>
+            </div>
+            <div class="admin-stat-icon"><i class="fa-solid fa-file-invoice"></i></div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-info">
+              <h5>Pending Leads</h5>
+              <div class="admin-stat-num" id="stat-pending-inq" style="color: var(--accent);">0</div>
+            </div>
+            <div class="admin-stat-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-info">
+              <h5>Resolved Leads</h5>
+              <div class="admin-stat-num" id="stat-resolved-inq" style="color: var(--success);">0</div>
+            </div>
+            <div class="admin-stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+          </div>
+        </div>
+
+        <!-- Inquiries Lead Table -->
+        <div class="admin-table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width: 15%;">Date / Client</th>
+                <th style="width: 20%;">Contact Details</th>
+                <th style="width: 25%;">Product Interest</th>
+                <th style="width: 25%;">Message / Request Details</th>
+                <th style="width: 15%; text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-inquiries-rows">
+              <!-- Loaded Dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PRODUCTS MANAGEMENT SECTION -->
+      <section id="products-sec" class="admin-section">
+        <div class="admin-title-row">
+          <div>
+            <h2 style="font-size: 1.75rem; font-family: var(--font-display);">Manage Machinery Catalog</h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">Add, edit, or delete cranes, block cutters, and CNC router machines from the site.</p>
+          </div>
+          <button class="btn btn-primary" onclick="openProductCrudModal()"><i class="fa-solid fa-plus"></i> Add New Product</button>
+        </div>
+
+        <!-- Products Stats Grid -->
+        <div class="admin-stats-row">
+          <div class="admin-stat-card accent-card">
+            <div class="admin-stat-info">
+              <h5>Total Products</h5>
+              <div class="admin-stat-num" id="stat-total-prod">0</div>
+            </div>
+            <div class="admin-stat-icon"><i class="fa-solid fa-industry"></i></div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-info">
+              <h5>CNC Categories</h5>
+              <div class="admin-stat-num" id="stat-cnc-prod" style="color: var(--accent);">0</div>
+            </div>
+            <div class="admin-stat-icon"><i class="fa-solid fa-microchip"></i></div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-info">
+              <h5>Crane Categories</h5>
+              <div class="admin-stat-num" id="stat-crane-prod" style="color: var(--success);">0</div>
+            </div>
+            <div class="admin-stat-icon"><i class="fa-solid fa-truck-ramp-box"></i></div>
+          </div>
+        </div>
+
+        <!-- Products Table -->
+        <div class="admin-table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width: 8%;">Image</th>
+                <th style="width: 25%;">Product Name</th>
+                <th style="width: 20%;">Category</th>
+                <th style="width: 32%;">Specifications Preview</th>
+                <th style="width: 15%; text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-products-rows">
+              <!-- Loaded Dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- REVIEWS MODERATION SECTION -->
+      <section id="reviews-sec" class="admin-section">
+        <div class="admin-title-row">
+          <div>
+            <h2 style="font-size: 1.75rem; font-family: var(--font-display);">Review Moderation Dashboard</h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">Monitor user ratings, verify customer testimonials, and delete spam comments.</p>
+          </div>
+          <button class="btn btn-primary" onclick="loadReviews()"><i class="fa-solid fa-rotate"></i> Refresh Reviews</button>
+        </div>
+
+        <!-- Reviews Stats Cards -->
+        <div class="admin-stats-row">
+          <div class="admin-stat-card accent-card">
+            <div class="admin-stat-info">
+              <h5>Total Reviews</h5>
+              <div class="admin-stat-num" id="stat-total-rev">0</div>
+            </div>
+            <div class="admin-stat-icon"><i class="fa-solid fa-comment-dots"></i></div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-info">
+              <h5>Average Rating</h5>
+              <div class="admin-stat-num" id="stat-avg-rating" style="color: var(--accent);">0.0</div>
+            </div>
+            <div class="admin-stat-icon"><i class="fa-solid fa-star"></i></div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-info">
+              <h5>Five Star Ratings</h5>
+              <div class="admin-stat-num" id="stat-fivestar-rev" style="color: var(--success);">0</div>
+            </div>
+            <div class="admin-stat-icon"><i class="fa-solid fa-circle-arrow-up"></i></div>
+          </div>
+        </div>
+
+        <!-- Reviews Moderation Table -->
+        <div class="admin-table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width: 15%;">Reviewer</th>
+                <th style="width: 10%;">Rating</th>
+                <th style="width: 20%;">Machine / Product</th>
+                <th style="width: 40%;">Comment Text</th>
+                <th style="width: 15%; text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-reviews-rows">
+              <!-- Loaded Dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ABOUT US EDIT SECTION -->
+      <section id="about-sec" class="admin-section">
+        <div class="admin-title-row">
+          <div>
+            <h2 style="font-size: 1.75rem; font-family: var(--font-display);">Manage About Us Details</h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">Update corporate history paragraphs, key specifications, and growth milestones.</p>
+          </div>
+          <button class="btn btn-primary" onclick="loadAboutDetails()"><i class="fa-solid fa-rotate"></i> Refresh Details</button>
+        </div>
+
+        <div class="hero-card" style="margin-top: 24px; padding: 28px; background-color: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color);">
+          <form id="admin-about-form">
+            <div class="form-input-group" style="margin-bottom: 24px;">
+              <label for="about-history-input">Corporate History Description *</label>
+              <textarea id="about-history-input" rows="8" required placeholder="Write details about the company origin, facility, standards, welding and design design portals..." style="line-height: 1.6; font-size: 0.95rem;"></textarea>
+            </div>
+
+            <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--accent); margin-bottom: 16px; padding-top: 12px; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-file-invoice"></i> Corporate profile parameters
+            </h3>
+            
+            <div class="form-grid" style="margin-bottom: 24px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+              <div class="form-input-group">
+                <label for="about-business-input">Nature of Business</label>
+                <input type="text" id="about-business-input" required placeholder="e.g. OEM Manufacturer">
+              </div>
+              <div class="form-input-group">
+                <label for="about-status-input">Legal Status</label>
+                <input type="text" id="about-status-input" required placeholder="e.g. Proprietorship Firm">
+              </div>
+              <div class="form-input-group">
+                <label for="about-owner-input">Owner / Promoter</label>
+                <input type="text" id="about-owner-input" required placeholder="e.g. R Parihar">
+              </div>
+              <div class="form-input-group">
+                <label for="about-turnover-input">Annual Turnover</label>
+                <input type="text" id="about-turnover-input" required placeholder="e.g. ₹1.5 - ₹5.0 Crores">
+              </div>
+              <div class="form-input-group">
+                <label for="about-gst-input">GSTIN Number</label>
+                <input type="text" id="about-gst-input" required placeholder="e.g. 08**********1Z5">
+              </div>
+              <div class="form-input-group">
+                <label for="about-date-input">Registration Date</label>
+                <input type="text" id="about-date-input" required placeholder="e.g. April 2018">
+              </div>
+            </div>
+
+            <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--accent); margin-bottom: 16px; padding-top: 12px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+              <span><i class="fa-solid fa-timeline"></i> Timeline Milestones</span>
+              <button type="button" class="btn btn-secondary" style="font-size:0.75rem; padding: 4px 10px;" onclick="addMilestoneRow()"><i class="fa-solid fa-plus"></i> Add Milestone</button>
+            </h3>
+            
+            <div id="about-milestones-container" style="display:flex; flex-direction:column; gap:12px; margin-bottom:30px;">
+              <!-- Loaded dynamically -->
+            </div>
+
+            <div style="display:flex; justify-content:flex-end;">
+              <button type="submit" class="btn btn-primary" id="about-save-btn" style="padding: 12px 24px;"><i class="fa-solid fa-floppy-disk"></i> Save About Details</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- VIDEOS MANAGEMENT SECTION -->
+      <section id="videos-sec" class="admin-section">
+        <div class="admin-title-row">
+          <div>
+            <h2 style="font-size: 1.75rem; font-family: var(--font-display);">Manage Product & Site Videos</h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">Add, edit, or delete dynamic video entries and demos displayed on the main site.</p>
+          </div>
+          <button class="btn btn-primary" onclick="openVideoCrudModal()"><i class="fa-solid fa-plus"></i> Add New Video</button>
+        </div>
+
+        <div class="admin-table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width: 10%;">Thumbnail</th>
+                <th style="width: 25%;">Title</th>
+                <th style="width: 15%;">Duration</th>
+                <th style="width: 35%;">Description</th>
+                <th style="width: 15%; text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-videos-rows">
+              <!-- Loaded Dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PHOTOS/GALLERY MANAGEMENT SECTION -->
+      <section id="photos-sec" class="admin-section">
+        <div class="admin-title-row">
+          <div>
+            <h2 style="font-size: 1.75rem; font-family: var(--font-display);">Manage Installation Gallery</h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">Upload, categorize, and description-tag photos from factory assemblies and customer workshops.</p>
+          </div>
+          <button class="btn btn-primary" onclick="openPhotoCrudModal()"><i class="fa-solid fa-plus"></i> Add Photo</button>
+        </div>
+
+        <div class="admin-table-container">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width: 15%;">Image</th>
+                <th style="width: 30%;">Caption</th>
+                <th style="width: 30%;">Category Tag</th>
+                <th style="width: 25%; text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-photos-rows">
+              <!-- Loaded Dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CONTACT US EDIT SECTION -->
+      <section id="contact-sec" class="admin-section">
+        <div class="admin-title-row">
+          <div>
+            <h2 style="font-size: 1.75rem; font-family: var(--font-display);">Manage Contact Details</h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">Update phone callback numbers, registered address, email, and Google map configurations.</p>
+          </div>
+          <button class="btn btn-primary" onclick="loadContactDetails()"><i class="fa-solid fa-rotate"></i> Refresh Details</button>
+        </div>
+
+        <div class="hero-card" style="margin-top: 24px; padding: 28px; background-color: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color);">
+          <form id="admin-contact-form">
+            <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-message"></i> Headers & Introduction
+            </h3>
+            <div class="form-grid" style="margin-bottom: 24px; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-input-group">
+                <label for="contact-heading-input">Primary Heading *</label>
+                <input type="text" id="contact-heading-input" required placeholder="e.g. Ready to discuss your custom machinery requirements?">
+              </div>
+              <div class="form-input-group">
+                <label for="contact-subheading-input">Secondary Description *</label>
+                <input type="text" id="contact-subheading-input" required placeholder="e.g. We usually answer phone inquiries immediately...">
+              </div>
+            </div>
+
+            <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--accent); margin-bottom: 16px; padding-top: 12px; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-location-dot"></i> Registered Address
+            </h3>
+            <div class="form-grid" style="margin-bottom: 24px; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+              <div class="form-input-group">
+                <label for="contact-address-title-input">Block Title *</label>
+                <input type="text" id="contact-address-title-input" required placeholder="e.g. Registered Address">
+              </div>
+              <div class="form-input-group">
+                <label for="contact-address-line1-input">Address Line 1 *</label>
+                <input type="text" id="contact-address-line1-input" required placeholder="e.g. New Parihar Engineering Works">
+              </div>
+              <div class="form-input-group">
+                <label for="contact-address-line2-input">Address Line 2 *</label>
+                <input type="text" id="contact-address-line2-input" required placeholder="e.g. Industrial Area, Jodhpur, Rajasthan, India">
+              </div>
+            </div>
+
+            <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--accent); margin-bottom: 16px; padding-top: 12px; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-address-card"></i> Contact Information
+            </h3>
+            <div class="form-grid" style="margin-bottom: 24px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+              <div class="form-input-group">
+                <label for="contact-title-input">Block Title *</label>
+                <input type="text" id="contact-title-input" required placeholder="e.g. Contact Details">
+              </div>
+              <div class="form-input-group">
+                <label for="contact-primary-input">Owner / Primary Contact *</label>
+                <input type="text" id="contact-primary-input" required placeholder="e.g. R Parihar (Owner)">
+              </div>
+              <div class="form-input-group">
+                <label for="contact-phone-input">Mobile Phone Callout *</label>
+                <input type="text" id="contact-phone-input" required placeholder="e.g. +91 98290 85934">
+              </div>
+              <div class="form-input-group">
+                <label for="contact-email-input">Email Address *</label>
+                <input type="email" id="contact-email-input" required placeholder="e.g. info@newpariharengineering.com">
+              </div>
+              <div class="form-input-group">
+                <label for="contact-gstin-input">GSTIN ID *</label>
+                <input type="text" id="contact-gstin-input" required placeholder="e.g. 08**********1Z5">
+              </div>
+            </div>
+
+            <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--accent); margin-bottom: 16px; padding-top: 12px; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-map-location-dot"></i> Yard Map Coordinates
+            </h3>
+            <div class="form-grid" style="margin-bottom: 30px; grid-template-columns: 1fr 1fr 1.2fr; gap: 16px;">
+              <div class="form-input-group">
+                <label for="contact-map-title-input">Map Block Title *</label>
+                <input type="text" id="contact-map-title-input" required placeholder="e.g. Assembly Yard Location Map">
+              </div>
+              <div class="form-input-group">
+                <label for="contact-map-address-input">Map Location Address *</label>
+                <input type="text" id="contact-map-address-input" required placeholder="e.g. Jodhpur Industrial Estate Phase II, Jodhpur, Rajasthan">
+              </div>
+              <div class="form-input-group">
+                <label for="contact-map-link-input">Map Location Google Hyperlink *</label>
+                <input type="url" id="contact-map-link-input" required placeholder="https://maps.google.com/...">
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end;">
+              <button type="submit" class="btn btn-primary" id="contact-save-btn" style="padding: 12px 24px;"><i class="fa-solid fa-floppy-disk"></i> Save Contact Details</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- PRODUCT CRUD EDITOR MODAL -->
+  <div class="detail-modal" id="product-crud-modal">
+    <div class="detail-modal-header">
+      <h3 id="crud-modal-title" style="font-family: var(--font-display);"><i class="fa-solid fa-pen-to-square" style="color:var(--accent)"></i> Edit Product Details</h3>
+      <button class="detail-modal-close" onclick="closeProductCrudModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="detail-modal-content">
+      <form id="product-crud-form">
+        <input type="hidden" id="crud-product-id">
+        
+        <div class="form-grid" style="margin-bottom: 16px;">
+          <div class="form-input-group">
+            <label for="crud-name">Product Name *</label>
+            <input type="text" id="crud-name" required placeholder="e.g. 9 Feet Pillar Block Cutter">
+          </div>
+          <div class="form-input-group">
+            <label for="crud-category">Category *</label>
+            <select id="crud-category" required>
+              <option value="Block Cutting Machine">Block Cutting Machine</option>
+              <option value="CNC Machines">CNC Machines</option>
+              <option value="Crane">Crane</option>
+              <option value="Industrial Crane">Industrial Crane</option>
+              <option value="Factory Crane">Factory Crane</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid" style="margin-bottom: 16px; grid-template-columns: 1fr;">
+          <div class="form-input-group">
+            <label style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+              <span>Product Images * (Upload single or multiple files)</span>
+              <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">Format: PNG, JPG, WebP</span>
+            </label>
+            <input type="file" id="crud-images-input" multiple accept="image/*" style="width: 100%; padding: 12px; background-color: var(--bg-primary); border: 1.5px dashed var(--border-color); border-radius: 6px; cursor: pointer;">
+            <!-- Uploaded Image Previews Grid -->
+            <div class="admin-images-preview-grid" id="crud-images-preview-list"></div>
+          </div>
+        </div>
+
+        <div class="form-input-group" style="margin-bottom: 16px;">
+          <label for="crud-desc">Detailed Description *</label>
+          <textarea id="crud-desc" rows="3" required placeholder="Write machine performance capability, body structure, motor attributes..."></textarea>
+        </div>
+
+        <!-- Spec Key-Value Builder -->
+        <div class="form-input-group" style="margin-bottom: 16px;">
+          <label style="display:flex; justify-content:space-between; align-items:center;">
+            <span>Technical Specifications *</span>
+            <button type="button" class="btn btn-secondary" style="font-size:0.75rem; padding: 4px 10px;" onclick="addSpecificationRow()"><i class="fa-solid fa-plus"></i> Add Spec Row</button>
+          </label>
+          <div class="spec-builder-list" id="crud-specifications-container">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+
+        <div class="form-grid" style="margin-bottom: 16px;">
+          <div class="form-input-group">
+            <label for="crud-features">Key Features (One per line) *</label>
+            <textarea id="crud-features" rows="3" required placeholder="Heavy-duty oil-bathed guide pillars&#10;Automatic water-feeding system"></textarea>
+          </div>
+          <div class="form-input-group">
+            <label for="crud-apps">Industrial Applications (One per line) *</label>
+            <textarea id="crud-apps" rows="3" required placeholder="Granite slab cutting&#10;Stone block sizing"></textarea>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:28px;">
+          <button type="button" class="btn btn-secondary" onclick="closeProductCrudModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="crud-save-btn"><i class="fa-solid fa-floppy-disk"></i> Save Product Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- VIDEO CRUD EDITOR MODAL -->
+  <div class="detail-modal" id="video-crud-modal">
+    <div class="detail-modal-header">
+      <h3 id="video-modal-title" style="font-family: var(--font-display);"><i class="fa-solid fa-video" style="color:var(--accent)"></i> Add/Edit Video Details</h3>
+      <button class="detail-modal-close" onclick="closeVideoCrudModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="detail-modal-content">
+      <form id="video-crud-form">
+        <input type="hidden" id="crud-video-id">
+        
+        <div class="form-grid" style="margin-bottom: 16px;">
+          <div class="form-input-group">
+            <label for="video-crud-title">Video Title *</label>
+            <input type="text" id="video-crud-title" required placeholder="e.g. 6 Feet Pillar Block Cutter Demo">
+          </div>
+          <div class="form-input-group">
+            <label for="video-crud-duration">Duration Label *</label>
+            <input type="text" id="video-crud-duration" required placeholder="e.g. Duration: 2:45 Mins">
+          </div>
+        </div>
+
+        <div class="form-grid" style="margin-bottom: 16px; grid-template-columns: 1fr;">
+          <div class="form-input-group">
+            <label style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+              <span>Video Thumbnail *</span>
+              <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">Format: PNG, JPG, WebP</span>
+            </label>
+            <input type="file" id="video-crud-thumbnail-input" accept="image/*" style="width: 100%; padding: 12px; background-color: var(--bg-primary); border: 1.5px dashed var(--border-color); border-radius: 6px; cursor: pointer;">
+            <!-- Hidden input for thumbnail URL storage -->
+            <input type="hidden" id="video-crud-thumbnail-url">
+            <div id="video-crud-thumbnail-preview" style="margin-top: 10px; max-width: 120px; display: none;">
+              <img src="" style="width: 100%; border-radius: 6px; border: 1px solid var(--border-color);">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid" style="margin-bottom: 16px;">
+          <div class="form-input-group">
+            <label for="video-crud-url">Video Filename or Link *</label>
+            <input type="text" id="video-crud-url" required placeholder="e.g. block_cutter_cutting.mp4">
+          </div>
+        </div>
+
+        <div class="form-input-group" style="margin-bottom: 24px;">
+          <label for="video-crud-desc">Short Description *</label>
+          <textarea id="video-crud-desc" rows="3" required placeholder="Write a short explanation of what is shown in the video..."></textarea>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:12px;">
+          <button type="button" class="btn btn-secondary" onclick="closeVideoCrudModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="video-crud-save-btn"><i class="fa-solid fa-floppy-disk"></i> Save Video</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- PHOTO CRUD EDITOR MODAL -->
+  <div class="detail-modal" id="photo-crud-modal">
+    <div class="detail-modal-header">
+      <h3 id="photo-modal-title-header" style="font-family: var(--font-display);"><i class="fa-solid fa-image" style="color:var(--accent)"></i> Add Photo to Gallery</h3>
+      <button class="detail-modal-close" onclick="closePhotoCrudModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="detail-modal-content">
+      <form id="photo-crud-form">
+        <input type="hidden" id="crud-photo-id">
+        
+        <div class="form-grid" style="margin-bottom: 16px; grid-template-columns: 1fr;">
+          <div class="form-input-group">
+            <label style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+              <span>Gallery Image *</span>
+              <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">Format: PNG, JPG, WebP</span>
+            </label>
+            <input type="file" id="photo-crud-image-input" accept="image/*" style="width: 100%; padding: 12px; background-color: var(--bg-primary); border: 1.5px dashed var(--border-color); border-radius: 6px; cursor: pointer;">
+            <!-- Hidden input for url -->
+            <input type="hidden" id="photo-crud-image-url">
+            <div id="photo-crud-image-preview" style="margin-top: 10px; max-width: 120px; display: none;">
+              <img src="" style="width: 100%; border-radius: 6px; border: 1px solid var(--border-color);">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid" style="margin-bottom: 16px;">
+          <div class="form-input-group">
+            <label for="photo-crud-caption">Caption Title *</label>
+            <input type="text" id="photo-crud-caption" required placeholder="e.g. Pillar Block assembly line">
+          </div>
+          <div class="form-input-group">
+            <label for="photo-crud-category">Category Subtitle *</label>
+            <input type="text" id="photo-crud-category" required placeholder="e.g. Manufacturing Yard">
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top: 24px;">
+          <button type="button" class="btn btn-secondary" onclick="closePhotoCrudModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="photo-crud-save-btn"><i class="fa-solid fa-floppy-disk"></i> Add Photo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL BACKDROP -->
+  <div class="modal-backdrop" id="modal-backdrop"></div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast" id="toast-notification">
+    <i class="fa-solid fa-circle-check" id="toast-icon" style="font-size: 1.25rem;"></i>
+    <span id="toast-message">Task updated!</span>
+  </div>
+
+  <!-- Script for Dashboard Operations -->
+  <script src="/js/admin.js"></script>
+</body>
+</html>

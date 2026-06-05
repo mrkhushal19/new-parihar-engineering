@@ -1,0 +1,21 @@
+{
+  "heading": "Ready to discuss your custom machinery requirements?",
+  "subheading": "We usually answer phone inquiries immediately and email quotes within 24 hours. You can also visit our assembly yard in Jodhpur.",
+  "address": {
+    "title": "Registered Address",
+    "line1": "New Parihar Engineering Works",
+    "line2": "Industrial Area, Jodhpur, Rajasthan, India"
+  },
+  "contact": {
+    "title": "Contact Details",
+    "primaryContact": "R Parihar (Owner)",
+    "phone": "+91 98290 85934",
+    "email": "info@newpariharengineering.com",
+    "gstin": "08**********1Z5"
+  },
+  "map": {
+    "title": "Assembly Yard Location Map",
+    "address": "Jodhpur Industrial Estate Phase II, Jodhpur, Rajasthan",
+    "link": "https://maps.google.com"
+  }
+}

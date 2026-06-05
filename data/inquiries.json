@@ -1,0 +1,15 @@
+[
+  {
+    "id": "inq-1",
+    "name": "Ramesh Patel",
+    "email": "ramesh@patelstones.com",
+    "phone": "9876543210",
+    "company": "Patel Stone Industries",
+    "message": "Interested in buying the 3 Axis Stone CNC Router. Please send the quotation and delivery timeline to Jodhpur.",
+    "items": [
+      "Stone CNC Router Machine, 3 Axis"
+    ],
+    "date": "2026-06-04T10:15:30.000Z",
+    "status": "pending"
+  }
+]

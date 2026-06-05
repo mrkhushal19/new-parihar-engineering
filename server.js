@@ -267,6 +267,7 @@ app.post('/api/products', requireAdminAuth, async (req, res) => {
     );
     if (!error) return res.status(201).json(data);
     console.error('Supabase product insert error:', error ? error.message : 'No data returned');
+    return res.status(500).json({ error: `Supabase database error: ${error ? error.message : 'Unknown error'}` });
   }
 
   // Fallback to local JSON
@@ -305,6 +306,7 @@ app.put('/api/products/:id', requireAdminAuth, async (req, res) => {
     if (!error) return res.json(data);
     if (error && error.code === 'PGRST116') return res.status(404).json({ error: 'Product not found.' });
     console.error('Supabase product update error:', error ? error.message : 'No data returned');
+    return res.status(500).json({ error: `Supabase database error: ${error ? error.message : 'Unknown error'}` });
   }
 
   // Fallback to local JSON
@@ -346,6 +348,7 @@ app.delete('/api/products/:id', requireAdminAuth, async (req, res) => {
       return res.json({ message: 'Product deleted successfully' });
     }
     console.error('Supabase product delete error:', error ? error.message : 'No data returned');
+    return res.status(500).json({ error: `Supabase database error: ${error ? error.message : 'Unknown error'}` });
   }
 
   const products = await readJSONFile('products.json');
@@ -407,6 +410,7 @@ app.post('/api/reviews', async (req, res) => {
     );
     if (!error) return res.status(201).json(data);
     console.error('Supabase review insert error:', error ? error.message : 'No data returned');
+    return res.status(500).json({ error: `Supabase database error: ${error ? error.message : 'Unknown error'}` });
   }
 
   const reviews = await readJSONFile('reviews.json');
@@ -449,6 +453,7 @@ app.post('/api/inquiries', async (req, res) => {
     );
     if (!error) return res.status(201).json(data);
     console.error('Supabase inquiry insert error:', error ? error.message : 'No data returned');
+    return res.status(500).json({ error: `Supabase database error: ${error ? error.message : 'Unknown error'}` });
   }
 
   const inquiries = await readJSONFile('inquiries.json');
@@ -489,6 +494,7 @@ app.put('/api/about', requireAdminAuth, async (req, res) => {
     );
     if (!error) return res.json(data);
     console.error('Supabase about update error:', error ? error.message : 'No data returned');
+    return res.status(500).json({ error: `Supabase database error: ${error ? error.message : 'Unknown error'}` });
   }
   const success = await writeJSONFile('about.json', req.body);
   if (success) {
@@ -526,6 +532,7 @@ app.put('/api/contact', requireAdminAuth, async (req, res) => {
     );
     if (!error) return res.json(data);
     console.error('Supabase contact update error:', error ? error.message : 'No data returned');
+    return res.status(500).json({ error: `Supabase database error: ${error ? error.message : 'Unknown error'}` });
   }
   const success = await writeJSONFile('contact.json', req.body);
   if (success) {

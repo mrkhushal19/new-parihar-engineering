@@ -3,9 +3,16 @@
   publish = "public"
   functions = "functions"
 
+[build.environment]
+  AWS_LAMBDA_JS_RUNTIME = "nodejs18.x"
+  NODE_VERSION = "18"
+
 [functions]
   node_bundler = "esbuild"
   included_files = ["data/**"]
+
+[functions.server]
+  node_bundler = "esbuild"
 
 [[redirects]]
   from = "/api/*"

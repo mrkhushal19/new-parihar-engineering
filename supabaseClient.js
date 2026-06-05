@@ -17,7 +17,16 @@ async function initSupabase() {
     }
 
     try {
-      supabase = createClient(url, key);
+      supabase = createClient(url, key, {
+        global: {
+          fetch: (fetchUrl, options = {}) => {
+            return fetch(fetchUrl, {
+              ...options,
+              signal: AbortSignal.timeout(15000)
+            });
+          }
+        }
+      });
       const { error } = await supabase.from('products').select('id').limit(1);
       if (error) throw error;
       online = true;

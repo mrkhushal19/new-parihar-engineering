@@ -91,12 +91,25 @@ async function readJSONFile(fileName) {
 }
 
 async function writeJSONFile(fileName, data) {
+  if (isServerless) {
+    console.warn(`⚠️ Warning: Write operation for ${fileName} ignored in serverless mode (read-only filesystem).`);
+    return false;
+  }
   try {
     await fs.writeFile(getDataFilePath(fileName), JSON.stringify(data, null, 2), 'utf-8');
     return true;
   } catch (error) {
     console.error(`Error writing ${fileName}:`, error);
     return false;
+  }
+}
+
+async function safeDbCall(promise) {
+  try {
+    return await promise;
+  } catch (err) {
+    console.error('Supabase query exception:', err.message);
+    return { data: null, error: err };
   }
 }
 
@@ -249,10 +262,11 @@ app.post('/api/products', requireAdminAuth, async (req, res) => {
   };
 
   if (db.isOnline()) {
-    const { data, error } = await db.getSupabase()
-      .from('products').insert(newProduct).select().single();
+    const { data, error } = await safeDbCall(
+      db.getSupabase().from('products').insert(newProduct).select().single()
+    );
     if (!error) return res.status(201).json(data);
-    console.error('Supabase product insert error:', error.message);
+    console.error('Supabase product insert error:', error ? error.message : 'No data returned');
   }
 
   // Fallback to local JSON
@@ -285,11 +299,12 @@ app.put('/api/products/:id', requireAdminAuth, async (req, res) => {
     if (Array.isArray(features)) updates.features = features;
     if (Array.isArray(applications)) updates.applications = applications;
 
-    const { data, error } = await db.getSupabase()
-      .from('products').update(updates).eq('id', req.params.id).select().single();
+    const { data, error } = await safeDbCall(
+      db.getSupabase().from('products').update(updates).eq('id', req.params.id).select().single()
+    );
     if (!error) return res.json(data);
-    if (error.code === 'PGRST116') return res.status(404).json({ error: 'Product not found.' });
-    console.error('Supabase product update error:', error.message);
+    if (error && error.code === 'PGRST116') return res.status(404).json({ error: 'Product not found.' });
+    console.error('Supabase product update error:', error ? error.message : 'No data returned');
   }
 
   // Fallback to local JSON
@@ -323,13 +338,14 @@ app.put('/api/products/:id', requireAdminAuth, async (req, res) => {
 // 7. DELETE /api/products/:id - Delete a product (secured)
 app.delete('/api/products/:id', requireAdminAuth, async (req, res) => {
   if (db.isOnline()) {
-    const { data, error } = await db.getSupabase()
-      .from('products').delete().eq('id', req.params.id).select();
+    const { data, error } = await safeDbCall(
+      db.getSupabase().from('products').delete().eq('id', req.params.id).select()
+    );
     if (!error) {
-      if (data.length === 0) return res.status(404).json({ error: 'Product not found.' });
+      if (data && data.length === 0) return res.status(404).json({ error: 'Product not found.' });
       return res.json({ message: 'Product deleted successfully' });
     }
-    console.error('Supabase product delete error:', error.message);
+    console.error('Supabase product delete error:', error ? error.message : 'No data returned');
   }
 
   const products = await readJSONFile('products.json');
@@ -386,10 +402,11 @@ app.post('/api/reviews', async (req, res) => {
   };
 
   if (db.isOnline()) {
-    const { data, error } = await db.getSupabase()
-      .from('reviews').insert(newReview).select().single();
+    const { data, error } = await safeDbCall(
+      db.getSupabase().from('reviews').insert(newReview).select().single()
+    );
     if (!error) return res.status(201).json(data);
-    console.error('Supabase review insert error:', error.message);
+    console.error('Supabase review insert error:', error ? error.message : 'No data returned');
   }
 
   const reviews = await readJSONFile('reviews.json');
@@ -427,10 +444,11 @@ app.post('/api/inquiries', async (req, res) => {
   };
 
   if (db.isOnline()) {
-    const { data, error } = await db.getSupabase()
-      .from('inquiries').insert(newInquiry).select().single();
+    const { data, error } = await safeDbCall(
+      db.getSupabase().from('inquiries').insert(newInquiry).select().single()
+    );
     if (!error) return res.status(201).json(data);
-    console.error('Supabase inquiry insert error:', error.message);
+    console.error('Supabase inquiry insert error:', error ? error.message : 'No data returned');
   }
 
   const inquiries = await readJSONFile('inquiries.json');
@@ -466,10 +484,11 @@ app.get('/api/about', async (req, res) => {
 // 12. PUT /api/about - Update about details (secured)
 app.put('/api/about', requireAdminAuth, async (req, res) => {
   if (db.isOnline()) {
-    const { data, error } = await db.getSupabase()
-      .from('about').upsert({ id: 1, ...req.body }).select().single();
+    const { data, error } = await safeDbCall(
+      db.getSupabase().from('about').upsert({ id: 1, ...req.body }).select().single()
+    );
     if (!error) return res.json(data);
-    console.error('Supabase about update error:', error.message);
+    console.error('Supabase about update error:', error ? error.message : 'No data returned');
   }
   const success = await writeJSONFile('about.json', req.body);
   if (success) {
@@ -502,10 +521,11 @@ app.get('/api/contact', async (req, res) => {
 // 12c. PUT /api/contact - Update contact details (secured)
 app.put('/api/contact', requireAdminAuth, async (req, res) => {
   if (db.isOnline()) {
-    const { data, error } = await db.getSupabase()
-      .from('contact').upsert({ id: 1, ...req.body }).select().single();
+    const { data, error } = await safeDbCall(
+      db.getSupabase().from('contact').upsert({ id: 1, ...req.body }).select().single()
+    );
     if (!error) return res.json(data);
-    console.error('Supabase contact update error:', error.message);
+    console.error('Supabase contact update error:', error ? error.message : 'No data returned');
   }
   const success = await writeJSONFile('contact.json', req.body);
   if (success) {

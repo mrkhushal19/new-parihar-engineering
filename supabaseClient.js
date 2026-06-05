@@ -25,6 +25,7 @@ async function initSupabase() {
     } catch (error) {
       supabase = null;
       online = false;
+      initPromise = null; // Clear promise to allow connection retry on next request
       console.warn(`\n⚠️  [Supabase] Connection failed: ${error.message} — falling back to OFFLINE mode\n`);
     }
   })();

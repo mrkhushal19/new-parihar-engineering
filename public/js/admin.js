@@ -766,7 +766,8 @@ function showToast(message, isError = false) {
 async function loadAboutDetails() {
   try {
     const response = await fetch('/api/about');
-    aboutData = await response.json();
+    const resData = await response.json();
+    aboutData = Array.isArray(resData) ? resData[0] : resData;
     populateAboutForm();
   } catch (error) {
     console.error('Error fetching about details:', error);
@@ -1314,7 +1315,8 @@ async function deletePhoto(photoId) {
 async function loadContactDetails() {
   try {
     const response = await fetch('/api/contact');
-    contactData = await response.json();
+    const resData = await response.json();
+    contactData = Array.isArray(resData) ? resData[0] : resData;
     populateContactForm();
   } catch (error) {
     console.error('Error fetching contact details:', error);

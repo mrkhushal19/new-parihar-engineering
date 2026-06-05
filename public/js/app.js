@@ -771,7 +771,18 @@ function renderAboutDetails(data) {
   const container = document.getElementById('about-dynamic-content');
   if (!container) return;
 
-  const milestonesHtml = (data.milestones || []).map(m => {
+  // Handle array and null/undefined responses
+  const aboutData = Array.isArray(data) ? data[0] : data;
+  if (!aboutData) {
+    console.warn('About data is empty or invalid:', data);
+    return;
+  }
+
+  const details = aboutData.details || {};
+  const milestones = aboutData.milestones || [];
+  const history = aboutData.history || '';
+
+  const milestonesHtml = milestones.map(m => {
     const colonIdx = m.indexOf(':');
     let year = '';
     let desc = m;
@@ -793,7 +804,7 @@ function renderAboutDetails(data) {
         <h3 style="font-size: 1.5rem; color: var(--accent); margin-bottom: 20px; font-family: var(--font-display); display: flex; align-items: center; gap: 10px;">
           <i class="fa-solid fa-history"></i> Corporate History & Infrastructure
         </h3>
-        <p style="line-height: 1.8; color: var(--text-secondary); margin-bottom: 24px; white-space: pre-line; font-size: 1.05rem;">${data.history}</p>
+        <p style="line-height: 1.8; color: var(--text-secondary); margin-bottom: 24px; white-space: pre-line; font-size: 1.05rem;">${history}</p>
       </div>
 
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px;">
@@ -804,27 +815,27 @@ function renderAboutDetails(data) {
           </h3>
           <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding: 12px 0;">
             <span style="color: var(--text-secondary); font-size: 0.9rem;">Nature of Business</span>
-            <span style="font-weight: 600; color: var(--text-primary); text-align: right;">${data.details.natureOfBusiness || 'OEM Manufacturer'}</span>
+            <span style="font-weight: 600; color: var(--text-primary); text-align: right;">${details.natureOfBusiness || 'OEM Manufacturer'}</span>
           </div>
           <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding: 12px 0;">
             <span style="color: var(--text-secondary); font-size: 0.9rem;">Legal Status</span>
-            <span style="font-weight: 600; color: var(--text-primary); text-align: right;">${data.details.legalStatus || 'Proprietorship Firm'}</span>
+            <span style="font-weight: 600; color: var(--text-primary); text-align: right;">${details.legalStatus || 'Proprietorship Firm'}</span>
           </div>
           <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding: 12px 0;">
             <span style="color: var(--text-secondary); font-size: 0.9rem;">Owner / Promoter</span>
-            <span style="font-weight: 600; color: var(--text-primary); text-align: right;">${data.details.owner || 'R Parihar'}</span>
+            <span style="font-weight: 600; color: var(--text-primary); text-align: right;">${details.owner || 'R Parihar'}</span>
           </div>
           <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding: 12px 0;">
             <span style="color: var(--text-secondary); font-size: 0.9rem;">Annual Turnover</span>
-            <span style="font-weight: 600; color: var(--accent); text-align: right;">${data.details.turnover || '₹1.5 - ₹5.0 Crores'}</span>
+            <span style="font-weight: 600; color: var(--accent); text-align: right;">${details.turnover || '₹1.5 - ₹5.0 Crores'}</span>
           </div>
           <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding: 12px 0;">
             <span style="color: var(--text-secondary); font-size: 0.9rem;">GSTIN</span>
-            <span style="font-weight: 600; color: var(--text-primary); text-align: right; font-family: monospace;">${data.details.gst || '08**********1Z5'}</span>
+            <span style="font-weight: 600; color: var(--text-primary); text-align: right; font-family: monospace;">${details.gst || '08**********1Z5'}</span>
           </div>
           <div style="display: flex; justify-content: space-between; padding: 12px 0 0 0;">
             <span style="color: var(--text-secondary); font-size: 0.9rem;">Registration Date</span>
-            <span style="font-weight: 600; color: var(--text-primary); text-align: right;">${data.details.registrationDate || 'April 2018'}</span>
+            <span style="font-weight: 600; color: var(--text-primary); text-align: right;">${details.registrationDate || 'April 2018'}</span>
           </div>
         </div>
 
@@ -934,42 +945,55 @@ function renderContactDetails(data) {
   const topPhone = document.getElementById('top-bar-phone');
   const headerCall = document.getElementById('header-call-btn');
 
-  if (topAddress && data.map && data.map.address) {
-    topAddress.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${data.map.address}`;
+  // Handle array and null/undefined responses
+  const contactData = Array.isArray(data) ? data[0] : data;
+  if (!contactData) {
+    console.warn('Contact data is empty or invalid:', data);
+    return;
   }
-  if (topGst && data.contact && data.contact.gstin) {
-    topGst.innerHTML = `<i class="fa-solid fa-file-invoice-dollar"></i> GSTIN: ${data.contact.gstin}`;
+
+  const address = contactData.address || {};
+  const contact = contactData.contact || {};
+  const map = contactData.map || {};
+  const heading = contactData.heading || '';
+  const subheading = contactData.subheading || '';
+
+  if (topAddress && map.address) {
+    topAddress.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${map.address}`;
   }
-  if (topPhone && data.contact && data.contact.primaryContact && data.contact.phone) {
-    topPhone.innerHTML = `<i class="fa-solid fa-phone"></i> Call ${data.contact.primaryContact}: ${data.contact.phone}`;
+  if (topGst && contact.gstin) {
+    topGst.innerHTML = `<i class="fa-solid fa-file-invoice-dollar"></i> GSTIN: ${contact.gstin}`;
   }
-  if (headerCall && data.contact && data.contact.phone) {
-    headerCall.href = `tel:${data.contact.phone.replace(/\s+/g, '')}`;
+  if (topPhone && contact.primaryContact && contact.phone) {
+    topPhone.innerHTML = `<i class="fa-solid fa-phone"></i> Call ${contact.primaryContact}: ${contact.phone}`;
+  }
+  if (headerCall && contact.phone) {
+    headerCall.href = `tel:${contact.phone.replace(/\s+/g, '')}`;
   }
 
   const panel = document.getElementById('contact-dynamic-info');
   if (panel) {
     panel.innerHTML = `
-      <h3>${data.heading}</h3>
-      <p style="color: var(--text-secondary);">${data.subheading}</p>
+      <h3>${heading || 'Ready to discuss your custom machinery requirements?'}</h3>
+      <p style="color: var(--text-secondary);">${subheading || 'We usually answer phone inquiries immediately.'}</p>
 
       <div class="contact-card-item">
         <div class="contact-card-icon"><i class="fa-solid fa-location-dot"></i></div>
         <div class="contact-card-text">
-          <h4>${data.address.title}</h4>
-          <p>${data.address.line1}</p>
-          <p>${data.address.line2}</p>
+          <h4>${address.title || 'Registered Address'}</h4>
+          <p>${address.line1 || ''}</p>
+          <p>${address.line2 || ''}</p>
         </div>
       </div>
 
       <div class="contact-card-item">
         <div class="contact-card-icon"><i class="fa-solid fa-address-card"></i></div>
         <div class="contact-card-text">
-          <h4>${data.contact.title}</h4>
-          <p>Primary Contact: <strong>${data.contact.primaryContact}</strong></p>
-          <p>Mobile: <a href="tel:${data.contact.phone.replace(/\s+/g, '')}">${data.contact.phone}</a></p>
-          <p>Email: <a href="mailto:${data.contact.email}">${data.contact.email}</a></p>
-          <span class="gst-badge">GSTIN: ${data.contact.gstin}</span>
+          <h4>${contact.title || 'Contact Details'}</h4>
+          <p>Primary Contact: <strong>${contact.primaryContact || 'R Parihar (Owner)'}</strong></p>
+          <p>Mobile: <a href="tel:${(contact.phone || '').replace(/\s+/g, '')}">${contact.phone || ''}</a></p>
+          <p>Email: <a href="mailto:${contact.email || ''}">${contact.email || ''}</a></p>
+          <span class="gst-badge">GSTIN: ${contact.gstin || ''}</span>
         </div>
       </div>
 
@@ -977,9 +1001,9 @@ function renderContactDetails(data) {
       <div class="map-container">
         <div class="map-placeholder">
           <i class="fa-solid fa-map-location-dot"></i>
-          <h4>${data.map.title}</h4>
-          <p style="font-size: 0.8rem; margin-top: 6px;">${data.map.address}</p>
-          <a href="${data.map.link}" target="_blank" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.75rem; margin-top: 12px;"><i class="fa-solid fa-location-arrow"></i> Open in Google Maps</a>
+          <h4>${map.title || 'Assembly Yard Location Map'}</h4>
+          <p style="font-size: 0.8rem; margin-top: 6px;">${map.address || ''}</p>
+          <a href="${map.link || '#'}" target="_blank" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.75rem; margin-top: 12px;"><i class="fa-solid fa-location-arrow"></i> Open in Google Maps</a>
         </div>
       </div>
     `;

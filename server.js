@@ -429,6 +429,10 @@ app.post('/api/reviews', async (req, res) => {
 
 // 10. POST /api/inquiries - Submit a new inquiry
 app.post('/api/inquiries', async (req, res) => {
+  console.log('SUPABASE_URL exists:', !!process.env.SUPABASE_URL);
+  console.log('SUPABASE_KEY exists:', !!process.env.SUPABASE_KEY);
+  console.log('db.isOnline():', db.isOnline());
+
   const { name, email, phone, company, message, items } = req.body;
 
   if (!name || !phone || !message) {

@@ -27,15 +27,13 @@ async function initSupabase() {
           }
         }
       });
-      const { error } = await supabase.from('products').select('id').limit(1);
-      if (error) throw error;
       online = true;
-      console.log(`✅ [Supabase] Connected successfully — ONLINE mode: ${url}`);
+      console.log(`✅ [Supabase] Client initialized successfully — ONLINE mode: ${url}`);
     } catch (error) {
       supabase = null;
       online = false;
       initPromise = null; // Clear promise to allow connection retry on next request
-      console.warn(`\n⚠️  [Supabase] Connection failed: ${error.message} — falling back to OFFLINE mode\n`);
+      console.warn(`\n⚠️  [Supabase] Client initialization failed: ${error.message} — falling back to OFFLINE mode\n`);
     }
   })();
 

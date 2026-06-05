@@ -767,7 +767,7 @@ async function loadAboutDetails() {
   try {
     const response = await fetch('/api/about');
     const resData = await response.json();
-    aboutData = Array.isArray(resData) ? resData[0] : resData;
+    aboutData = (Array.isArray(resData) ? resData[0] : resData) || {};
     populateAboutForm();
   } catch (error) {
     console.error('Error fetching about details:', error);
@@ -1316,7 +1316,7 @@ async function loadContactDetails() {
   try {
     const response = await fetch('/api/contact');
     const resData = await response.json();
-    contactData = Array.isArray(resData) ? resData[0] : resData;
+    contactData = (Array.isArray(resData) ? resData[0] : resData) || {};
     populateContactForm();
   } catch (error) {
     console.error('Error fetching contact details:', error);

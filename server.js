@@ -67,11 +67,22 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ============================================
 // LOCAL JSON HELPERS (Offline Fallback)
 // ============================================
-const getDataFilePath = (fileName) => path.join(__dirname, 'data', fileName);
+const getDataFilePath = (fileName) => {
+  const paths = [
+    path.join(__dirname, 'data', fileName),
+    path.join(process.cwd(), 'data', fileName),
+    path.join(__dirname, '..', 'data', fileName)
+  ];
+  for (const p of paths) {
+    if (fsSync.existsSync(p)) return p;
+  }
+  return paths[0]; // fallback
+};
 
 async function readJSONFile(fileName) {
   try {
-    const data = await fs.readFile(getDataFilePath(fileName), 'utf-8');
+    const filePath = getDataFilePath(fileName);
+    const data = await fs.readFile(filePath, 'utf-8');
     return JSON.parse(data);
   } catch (error) {
     console.error(`Error reading ${fileName}:`, error);
@@ -180,9 +191,13 @@ app.post('/api/upload', requireAdminAuth, upload.array('files', 10), async (req,
 // 3. GET /api/products - Retrieve all products
 app.get('/api/products', async (req, res) => {
   if (db.isOnline()) {
-    const { data, error } = await db.getSupabase().from('products').select('*');
-    if (!error) return res.json(data);
-    console.error('Supabase products read error:', error.message);
+    try {
+      const { data, error } = await db.getSupabase().from('products').select('*');
+      if (!error && data && data.length > 0) return res.json(data);
+      console.warn('Supabase products empty or error:', error ? error.message : 'No rows returned');
+    } catch (err) {
+      console.error('Supabase products fetch exception:', err.message);
+    }
   }
   const products = await readJSONFile('products.json');
   res.json(products);
@@ -191,11 +206,15 @@ app.get('/api/products', async (req, res) => {
 // 4. GET /api/products/:id - Retrieve specific product details
 app.get('/api/products/:id', async (req, res) => {
   if (db.isOnline()) {
-    const { data, error } = await db.getSupabase()
-      .from('products').select('*').eq('id', req.params.id).single();
-    if (!error) return res.json(data);
-    if (error.code === 'PGRST116') return res.status(404).json({ error: 'Product not found' });
-    console.error('Supabase product read error:', error.message);
+    try {
+      const { data, error } = await db.getSupabase()
+        .from('products').select('*').eq('id', req.params.id).single();
+      if (!error && data) return res.json(data);
+      if (error && error.code === 'PGRST116') return res.status(404).json({ error: 'Product not found' });
+      console.warn('Supabase product empty or error:', error ? error.message : 'No row returned');
+    } catch (err) {
+      console.error('Supabase product fetch exception:', err.message);
+    }
   }
   const products = await readJSONFile('products.json');
   const product = products.find(p => p.id === req.params.id);
@@ -335,10 +354,14 @@ app.delete('/api/products/:id', requireAdminAuth, async (req, res) => {
 // 8. GET /api/reviews - Retrieve all reviews
 app.get('/api/reviews', async (req, res) => {
   if (db.isOnline()) {
-    const { data, error } = await db.getSupabase()
-      .from('reviews').select('*').order('date', { ascending: false });
-    if (!error) return res.json(data);
-    console.error('Supabase reviews read error:', error.message);
+    try {
+      const { data, error } = await db.getSupabase()
+        .from('reviews').select('*').order('date', { ascending: false });
+      if (!error && data && data.length > 0) return res.json(data);
+      console.warn('Supabase reviews empty or error:', error ? error.message : 'No rows returned');
+    } catch (err) {
+      console.error('Supabase reviews fetch exception:', err.message);
+    }
   }
   const reviews = await readJSONFile('reviews.json');
   res.json(reviews);
@@ -427,10 +450,14 @@ app.post('/api/inquiries', async (req, res) => {
 // 11. GET /api/about - Retrieve about content
 app.get('/api/about', async (req, res) => {
   if (db.isOnline()) {
-    const { data, error } = await db.getSupabase()
-      .from('about').select('*').eq('id', 1).single();
-    if (!error) return res.json(data);
-    console.error('Supabase about read error:', error.message);
+    try {
+      const { data, error } = await db.getSupabase()
+        .from('about').select('*').eq('id', 1).single();
+      if (!error && data && Object.keys(data).length > 0) return res.json(data);
+      console.warn('Supabase about empty or error:', error ? error.message : 'No row returned');
+    } catch (err) {
+      console.error('Supabase about fetch exception:', err.message);
+    }
   }
   const about = await readJSONFile('about.json');
   res.json(about);
@@ -459,10 +486,14 @@ app.put('/api/about', requireAdminAuth, async (req, res) => {
 // 12b. GET /api/contact - Retrieve contact details
 app.get('/api/contact', async (req, res) => {
   if (db.isOnline()) {
-    const { data, error } = await db.getSupabase()
-      .from('contact').select('*').eq('id', 1).single();
-    if (!error) return res.json(data);
-    console.error('Supabase contact read error:', error.message);
+    try {
+      const { data, error } = await db.getSupabase()
+        .from('contact').select('*').eq('id', 1).single();
+      if (!error && data && Object.keys(data).length > 0) return res.json(data);
+      console.warn('Supabase contact empty or error:', error ? error.message : 'No row returned');
+    } catch (err) {
+      console.error('Supabase contact fetch exception:', err.message);
+    }
   }
   const contact = await readJSONFile('contact.json');
   res.json(contact);
@@ -491,9 +522,13 @@ app.put('/api/contact', requireAdminAuth, async (req, res) => {
 // 13. GET /api/videos - Retrieve all video clips
 app.get('/api/videos', async (req, res) => {
   if (db.isOnline()) {
-    const { data, error } = await db.getSupabase().from('videos').select('*');
-    if (!error) return res.json(data);
-    console.error('Supabase videos read error:', error.message);
+    try {
+      const { data, error } = await db.getSupabase().from('videos').select('*');
+      if (!error && data && data.length > 0) return res.json(data);
+      console.warn('Supabase videos empty or error:', error ? error.message : 'No rows returned');
+    } catch (err) {
+      console.error('Supabase videos fetch exception:', err.message);
+    }
   }
   const videos = await readJSONFile('videos.json');
   res.json(videos);
@@ -609,9 +644,13 @@ app.delete('/api/videos/:id', requireAdminAuth, async (req, res) => {
 // 17. GET /api/photos - Retrieve all photo gallery items
 app.get('/api/photos', async (req, res) => {
   if (db.isOnline()) {
-    const { data, error } = await db.getSupabase().from('photos').select('*');
-    if (!error) return res.json(data);
-    console.error('Supabase photos read error:', error.message);
+    try {
+      const { data, error } = await db.getSupabase().from('photos').select('*');
+      if (!error && data && data.length > 0) return res.json(data);
+      console.warn('Supabase photos empty or error:', error ? error.message : 'No rows returned');
+    } catch (err) {
+      console.error('Supabase photos fetch exception:', err.message);
+    }
   }
   const photos = await readJSONFile('photos.json');
   res.json(photos);
@@ -721,10 +760,14 @@ app.delete('/api/photos/:id', requireAdminAuth, async (req, res) => {
 // 21. GET /api/inquiries - Retrieve all inquiries (Admin Panel)
 app.get('/api/inquiries', requireAdminAuth, async (req, res) => {
   if (db.isOnline()) {
-    const { data, error } = await db.getSupabase()
-      .from('inquiries').select('*').order('date', { ascending: false });
-    if (!error) return res.json(data);
-    console.error('Supabase inquiries read error:', error.message);
+    try {
+      const { data, error } = await db.getSupabase()
+        .from('inquiries').select('*').order('date', { ascending: false });
+      if (!error && data) return res.json(data);
+      console.warn('Supabase inquiries empty or error:', error ? error.message : 'No rows returned');
+    } catch (err) {
+      console.error('Supabase inquiries fetch exception:', err.message);
+    }
   }
   const inquiries = await readJSONFile('inquiries.json');
   res.json(inquiries);

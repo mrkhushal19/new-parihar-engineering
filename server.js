@@ -531,11 +531,16 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`===================================================`);
-  console.log(` New Parihar Engineering Works server running!`);
-  console.log(` URL: http://localhost:${PORT}`);
-  console.log(` Admin Portal: http://localhost:${PORT}/admin.html`);
-  console.log(`===================================================`);
-});
+// Start the server only when running locally (not as a serverless function)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`===================================================`);
+    console.log(` New Parihar Engineering Works server running!`);
+    console.log(` URL: http://localhost:${PORT}`);
+    console.log(` Admin Portal: http://localhost:${PORT}/admin.html`);
+    console.log(`===================================================`);
+  });
+}
+
+// Export for Netlify serverless function
+module.exports = app;

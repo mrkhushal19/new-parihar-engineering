@@ -6,10 +6,14 @@ const path = require('path');
 const fs = require('fs').promises;
 const fsSync = require('fs');
 const multer = require('multer');
+const db = require('./supabaseClient');
 
 const app = express();
 const PORT = process.env.PORT || 3005;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'parihar1990';
+
+// Initialize Supabase connection
+db.initSupabase();
 
 // Ensure upload directory exists
 const uploadDir = path.join(__dirname, 'public', 'uploads');
@@ -51,7 +55,9 @@ app.use(express.json());
 // Static files directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Helper functions for reading/writing files
+// ============================================
+// LOCAL JSON HELPERS (Offline Fallback)
+// ============================================
 const getDataFilePath = (fileName) => path.join(__dirname, 'data', fileName);
 
 async function readJSONFile(fileName) {
@@ -74,7 +80,9 @@ async function writeJSONFile(fileName, data) {
   }
 }
 
-// Authentication Middleware
+// ============================================
+// AUTHENTICATION MIDDLEWARE
+// ============================================
 function requireAdminAuth(req, res, next) {
   const authHeader = req.headers['authorization'];
   if (!authHeader) {
@@ -88,7 +96,9 @@ function requireAdminAuth(req, res, next) {
   next();
 }
 
-// REST API Endpoints
+// ============================================
+// REST API ENDPOINTS
+// ============================================
 
 // 1. POST /api/auth/login - Staff Authentication
 app.post('/api/auth/login', (req, res) => {
@@ -113,14 +123,30 @@ app.post('/api/upload', requireAdminAuth, upload.array('files', 10), (req, res) 
   }
 });
 
+// ============================================
+// PRODUCTS CRUD
+// ============================================
+
 // 3. GET /api/products - Retrieve all products
 app.get('/api/products', async (req, res) => {
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase().from('products').select('*');
+    if (!error) return res.json(data);
+    console.error('Supabase products read error:', error.message);
+  }
   const products = await readJSONFile('products.json');
   res.json(products);
 });
 
 // 4. GET /api/products/:id - Retrieve specific product details
 app.get('/api/products/:id', async (req, res) => {
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('products').select('*').eq('id', req.params.id).single();
+    if (!error) return res.json(data);
+    if (error.code === 'PGRST116') return res.status(404).json({ error: 'Product not found' });
+    console.error('Supabase product read error:', error.message);
+  }
   const products = await readJSONFile('products.json');
   const product = products.find(p => p.id === req.params.id);
   if (product) {
@@ -141,7 +167,6 @@ app.post('/api/products', requireAdminAuth, async (req, res) => {
   const imageList = Array.isArray(images) ? images : (image ? [image] : []);
   const primaryImage = imageList.length > 0 ? imageList[0] : '/images/block_cutter_6ft.png';
 
-  const products = await readJSONFile('products.json');
   const newProduct = {
     id: name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + Date.now().toString().slice(-4),
     name,
@@ -154,9 +179,17 @@ app.post('/api/products', requireAdminAuth, async (req, res) => {
     applications: Array.isArray(applications) ? applications : []
   };
 
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('products').insert(newProduct).select().single();
+    if (!error) return res.status(201).json(data);
+    console.error('Supabase product insert error:', error.message);
+  }
+
+  // Fallback to local JSON
+  const products = await readJSONFile('products.json');
   products.push(newProduct);
   const success = await writeJSONFile('products.json', products);
-
   if (success) {
     res.status(201).json(newProduct);
   } else {
@@ -168,13 +201,33 @@ app.post('/api/products', requireAdminAuth, async (req, res) => {
 app.put('/api/products/:id', requireAdminAuth, async (req, res) => {
   const { name, category, description, image, images, specifications, features, applications } = req.body;
 
+  const imageList = Array.isArray(images) ? images : (image ? [image] : null);
+  const primaryImage = imageList && imageList.length > 0 ? imageList[0] : null;
+
+  if (db.isOnline()) {
+    // Build update object, only include fields that are provided
+    const updates = {};
+    if (name) updates.name = name;
+    if (category) updates.category = category;
+    if (description) updates.description = description;
+    if (primaryImage) updates.image = primaryImage;
+    if (imageList) updates.images = imageList;
+    if (specifications) updates.specifications = specifications;
+    if (Array.isArray(features)) updates.features = features;
+    if (Array.isArray(applications)) updates.applications = applications;
+
+    const { data, error } = await db.getSupabase()
+      .from('products').update(updates).eq('id', req.params.id).select().single();
+    if (!error) return res.json(data);
+    if (error.code === 'PGRST116') return res.status(404).json({ error: 'Product not found.' });
+    console.error('Supabase product update error:', error.message);
+  }
+
+  // Fallback to local JSON
   const products = await readJSONFile('products.json');
   const index = products.findIndex(p => p.id === req.params.id);
 
   if (index !== -1) {
-    const imageList = Array.isArray(images) ? images : (image ? [image] : null);
-    const primaryImage = imageList && imageList.length > 0 ? imageList[0] : null;
-
     products[index] = {
       ...products[index],
       name: name || products[index].name,
@@ -200,6 +253,16 @@ app.put('/api/products/:id', requireAdminAuth, async (req, res) => {
 
 // 7. DELETE /api/products/:id - Delete a product (secured)
 app.delete('/api/products/:id', requireAdminAuth, async (req, res) => {
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('products').delete().eq('id', req.params.id).select();
+    if (!error) {
+      if (data.length === 0) return res.status(404).json({ error: 'Product not found.' });
+      return res.json({ message: 'Product deleted successfully' });
+    }
+    console.error('Supabase product delete error:', error.message);
+  }
+
   const products = await readJSONFile('products.json');
   const filtered = products.filter(p => p.id !== req.params.id);
 
@@ -215,8 +278,18 @@ app.delete('/api/products/:id', requireAdminAuth, async (req, res) => {
   }
 });
 
+// ============================================
+// REVIEWS
+// ============================================
+
 // 8. GET /api/reviews - Retrieve all reviews
 app.get('/api/reviews', async (req, res) => {
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('reviews').select('*').order('date', { ascending: false });
+    if (!error) return res.json(data);
+    console.error('Supabase reviews read error:', error.message);
+  }
   const reviews = await readJSONFile('reviews.json');
   res.json(reviews);
 });
@@ -229,7 +302,6 @@ app.post('/api/reviews', async (req, res) => {
     return res.status(400).json({ error: 'Name, rating, and comment are required fields.' });
   }
 
-  const reviews = await readJSONFile('reviews.json');
   const newReview = {
     id: `rev-${Date.now()}`,
     name,
@@ -240,15 +312,26 @@ app.post('/api/reviews', async (req, res) => {
     date: new Date().toISOString().split('T')[0]
   };
 
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('reviews').insert(newReview).select().single();
+    if (!error) return res.status(201).json(data);
+    console.error('Supabase review insert error:', error.message);
+  }
+
+  const reviews = await readJSONFile('reviews.json');
   reviews.unshift(newReview);
   const success = await writeJSONFile('reviews.json', reviews);
-
   if (success) {
     res.status(201).json(newReview);
   } else {
     res.status(500).json({ error: 'Failed to write to database' });
   }
 });
+
+// ============================================
+// INQUIRIES
+// ============================================
 
 // 10. POST /api/inquiries - Submit a new inquiry
 app.post('/api/inquiries', async (req, res) => {
@@ -258,7 +341,6 @@ app.post('/api/inquiries', async (req, res) => {
     return res.status(400).json({ error: 'Name, phone number, and inquiry message are required fields.' });
   }
 
-  const inquiries = await readJSONFile('inquiries.json');
   const newInquiry = {
     id: `inq-${Date.now()}`,
     name,
@@ -271,9 +353,16 @@ app.post('/api/inquiries', async (req, res) => {
     status: 'pending'
   };
 
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('inquiries').insert(newInquiry).select().single();
+    if (!error) return res.status(201).json(data);
+    console.error('Supabase inquiry insert error:', error.message);
+  }
+
+  const inquiries = await readJSONFile('inquiries.json');
   inquiries.unshift(newInquiry);
   const success = await writeJSONFile('inquiries.json', inquiries);
-
   if (success) {
     res.status(201).json(newInquiry);
   } else {
@@ -281,14 +370,30 @@ app.post('/api/inquiries', async (req, res) => {
   }
 });
 
+// ============================================
+// ABOUT US
+// ============================================
+
 // 11. GET /api/about - Retrieve about content
 app.get('/api/about', async (req, res) => {
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('about').select('*').eq('id', 1).single();
+    if (!error) return res.json(data);
+    console.error('Supabase about read error:', error.message);
+  }
   const about = await readJSONFile('about.json');
   res.json(about);
 });
 
 // 12. PUT /api/about - Update about details (secured)
 app.put('/api/about', requireAdminAuth, async (req, res) => {
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('about').upsert({ id: 1, ...req.body }).select().single();
+    if (!error) return res.json(data);
+    console.error('Supabase about update error:', error.message);
+  }
   const success = await writeJSONFile('about.json', req.body);
   if (success) {
     res.json(req.body);
@@ -297,14 +402,30 @@ app.put('/api/about', requireAdminAuth, async (req, res) => {
   }
 });
 
+// ============================================
+// CONTACT
+// ============================================
+
 // 12b. GET /api/contact - Retrieve contact details
 app.get('/api/contact', async (req, res) => {
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('contact').select('*').eq('id', 1).single();
+    if (!error) return res.json(data);
+    console.error('Supabase contact read error:', error.message);
+  }
   const contact = await readJSONFile('contact.json');
   res.json(contact);
 });
 
 // 12c. PUT /api/contact - Update contact details (secured)
 app.put('/api/contact', requireAdminAuth, async (req, res) => {
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('contact').upsert({ id: 1, ...req.body }).select().single();
+    if (!error) return res.json(data);
+    console.error('Supabase contact update error:', error.message);
+  }
   const success = await writeJSONFile('contact.json', req.body);
   if (success) {
     res.json(req.body);
@@ -313,8 +434,17 @@ app.put('/api/contact', requireAdminAuth, async (req, res) => {
   }
 });
 
+// ============================================
+// VIDEOS CRUD
+// ============================================
+
 // 13. GET /api/videos - Retrieve all video clips
 app.get('/api/videos', async (req, res) => {
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase().from('videos').select('*');
+    if (!error) return res.json(data);
+    console.error('Supabase videos read error:', error.message);
+  }
   const videos = await readJSONFile('videos.json');
   res.json(videos);
 });
@@ -326,7 +456,6 @@ app.post('/api/videos', requireAdminAuth, async (req, res) => {
     return res.status(400).json({ error: 'Title, duration, description, and video URL are required fields.' });
   }
 
-  const videos = await readJSONFile('videos.json');
   const newVideo = {
     id: `vid-${Date.now()}`,
     title,
@@ -336,6 +465,14 @@ app.post('/api/videos', requireAdminAuth, async (req, res) => {
     url
   };
 
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('videos').insert(newVideo).select().single();
+    if (!error) return res.status(201).json(data);
+    console.error('Supabase video insert error:', error.message);
+  }
+
+  const videos = await readJSONFile('videos.json');
   videos.push(newVideo);
   const success = await writeJSONFile('videos.json', videos);
   if (success) {
@@ -348,6 +485,22 @@ app.post('/api/videos', requireAdminAuth, async (req, res) => {
 // 15. PUT /api/videos/:id - Update video details (secured)
 app.put('/api/videos/:id', requireAdminAuth, async (req, res) => {
   const { title, duration, description, thumbnail, url } = req.body;
+
+  if (db.isOnline()) {
+    const updates = {};
+    if (title) updates.title = title;
+    if (duration) updates.duration = duration;
+    if (description) updates.description = description;
+    if (thumbnail) updates.thumbnail = thumbnail;
+    if (url) updates.url = url;
+
+    const { data, error } = await db.getSupabase()
+      .from('videos').update(updates).eq('id', req.params.id).select().single();
+    if (!error) return res.json(data);
+    if (error.code === 'PGRST116') return res.status(404).json({ error: 'Video not found.' });
+    console.error('Supabase video update error:', error.message);
+  }
+
   const videos = await readJSONFile('videos.json');
   const index = videos.findIndex(v => v.id === req.params.id);
 
@@ -374,6 +527,16 @@ app.put('/api/videos/:id', requireAdminAuth, async (req, res) => {
 
 // 16. DELETE /api/videos/:id - Delete video clip (secured)
 app.delete('/api/videos/:id', requireAdminAuth, async (req, res) => {
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('videos').delete().eq('id', req.params.id).select();
+    if (!error) {
+      if (data.length === 0) return res.status(404).json({ error: 'Video not found.' });
+      return res.json({ message: 'Video deleted successfully' });
+    }
+    console.error('Supabase video delete error:', error.message);
+  }
+
   const videos = await readJSONFile('videos.json');
   const filtered = videos.filter(v => v.id !== req.params.id);
 
@@ -389,8 +552,17 @@ app.delete('/api/videos/:id', requireAdminAuth, async (req, res) => {
   }
 });
 
+// ============================================
+// PHOTOS GALLERY CRUD
+// ============================================
+
 // 17. GET /api/photos - Retrieve all photo gallery items
 app.get('/api/photos', async (req, res) => {
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase().from('photos').select('*');
+    if (!error) return res.json(data);
+    console.error('Supabase photos read error:', error.message);
+  }
   const photos = await readJSONFile('photos.json');
   res.json(photos);
 });
@@ -402,7 +574,6 @@ app.post('/api/photos', requireAdminAuth, async (req, res) => {
     return res.status(400).json({ error: 'Image file path, caption, and category details are required.' });
   }
 
-  const photos = await readJSONFile('photos.json');
   const newPhoto = {
     id: `pic-${Date.now()}`,
     url,
@@ -410,6 +581,14 @@ app.post('/api/photos', requireAdminAuth, async (req, res) => {
     category
   };
 
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('photos').insert(newPhoto).select().single();
+    if (!error) return res.status(201).json(data);
+    console.error('Supabase photo insert error:', error.message);
+  }
+
+  const photos = await readJSONFile('photos.json');
   photos.push(newPhoto);
   const success = await writeJSONFile('photos.json', photos);
   if (success) {
@@ -422,6 +601,20 @@ app.post('/api/photos', requireAdminAuth, async (req, res) => {
 // 19. PUT /api/photos/:id - Update photo item details (secured)
 app.put('/api/photos/:id', requireAdminAuth, async (req, res) => {
   const { url, caption, category } = req.body;
+
+  if (db.isOnline()) {
+    const updates = {};
+    if (url) updates.url = url;
+    if (caption) updates.caption = caption;
+    if (category) updates.category = category;
+
+    const { data, error } = await db.getSupabase()
+      .from('photos').update(updates).eq('id', req.params.id).select().single();
+    if (!error) return res.json(data);
+    if (error.code === 'PGRST116') return res.status(404).json({ error: 'Photo not found.' });
+    console.error('Supabase photo update error:', error.message);
+  }
+
   const photos = await readJSONFile('photos.json');
   const index = photos.findIndex(p => p.id === req.params.id);
 
@@ -446,6 +639,16 @@ app.put('/api/photos/:id', requireAdminAuth, async (req, res) => {
 
 // 20. DELETE /api/photos/:id - Delete photo item (secured)
 app.delete('/api/photos/:id', requireAdminAuth, async (req, res) => {
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('photos').delete().eq('id', req.params.id).select();
+    if (!error) {
+      if (data.length === 0) return res.status(404).json({ error: 'Photo not found.' });
+      return res.json({ message: 'Photo deleted successfully' });
+    }
+    console.error('Supabase photo delete error:', error.message);
+  }
+
   const photos = await readJSONFile('photos.json');
   const filtered = photos.filter(p => p.id !== req.params.id);
 
@@ -461,10 +664,18 @@ app.delete('/api/photos/:id', requireAdminAuth, async (req, res) => {
   }
 });
 
-// Admin REST APIs (Secured)
+// ============================================
+// ADMIN-ONLY ENDPOINTS
+// ============================================
 
 // 21. GET /api/inquiries - Retrieve all inquiries (Admin Panel)
 app.get('/api/inquiries', requireAdminAuth, async (req, res) => {
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('inquiries').select('*').order('date', { ascending: false });
+    if (!error) return res.json(data);
+    console.error('Supabase inquiries read error:', error.message);
+  }
   const inquiries = await readJSONFile('inquiries.json');
   res.json(inquiries);
 });
@@ -474,6 +685,14 @@ app.put('/api/inquiries/:id/status', requireAdminAuth, async (req, res) => {
   const { status } = req.body;
   if (!status) {
     return res.status(400).json({ error: 'Status is required' });
+  }
+
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('inquiries').update({ status }).eq('id', req.params.id).select().single();
+    if (!error) return res.json(data);
+    if (error.code === 'PGRST116') return res.status(404).json({ error: 'Inquiry not found' });
+    console.error('Supabase inquiry status update error:', error.message);
   }
 
   const inquiries = await readJSONFile('inquiries.json');
@@ -494,6 +713,16 @@ app.put('/api/inquiries/:id/status', requireAdminAuth, async (req, res) => {
 
 // 23. DELETE /api/inquiries/:id - Delete inquiry (Admin Panel)
 app.delete('/api/inquiries/:id', requireAdminAuth, async (req, res) => {
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('inquiries').delete().eq('id', req.params.id).select();
+    if (!error) {
+      if (data.length === 0) return res.status(404).json({ error: 'Inquiry not found' });
+      return res.json({ message: 'Inquiry deleted successfully' });
+    }
+    console.error('Supabase inquiry delete error:', error.message);
+  }
+
   const inquiries = await readJSONFile('inquiries.json');
   const filtered = inquiries.filter(inq => inq.id !== req.params.id);
 
@@ -511,6 +740,16 @@ app.delete('/api/inquiries/:id', requireAdminAuth, async (req, res) => {
 
 // 24. DELETE /api/reviews/:id - Delete review (Admin Panel)
 app.delete('/api/reviews/:id', requireAdminAuth, async (req, res) => {
+  if (db.isOnline()) {
+    const { data, error } = await db.getSupabase()
+      .from('reviews').delete().eq('id', req.params.id).select();
+    if (!error) {
+      if (data.length === 0) return res.status(404).json({ error: 'Review not found' });
+      return res.json({ message: 'Review deleted successfully' });
+    }
+    console.error('Supabase review delete error:', error.message);
+  }
+
   const reviews = await readJSONFile('reviews.json');
   const filtered = reviews.filter(rev => rev.id !== req.params.id);
 
@@ -525,6 +764,10 @@ app.delete('/api/reviews/:id', requireAdminAuth, async (req, res) => {
     res.status(500).json({ error: 'Failed to delete review' });
   }
 });
+
+// ============================================
+// FRONTEND ROUTING FALLBACK & SERVER START
+// ============================================
 
 // Serve frontend routing fallback
 app.get('*', (req, res) => {

@@ -123,14 +123,18 @@ CREATE POLICY "Allow admin delete on reviews" ON reviews FOR DELETE USING (true)
 
 -- 4. ABOUT Policies
 DROP POLICY IF EXISTS "Allow public select on about" ON about;
+DROP POLICY IF EXISTS "Allow admin insert on about" ON about;
 DROP POLICY IF EXISTS "Allow admin update on about" ON about;
 CREATE POLICY "Allow public select on about" ON about FOR SELECT USING (true);
+CREATE POLICY "Allow admin insert on about" ON about FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow admin update on about" ON about FOR UPDATE USING (true);
 
 -- 5. CONTACT Policies
 DROP POLICY IF EXISTS "Allow public select on contact" ON contact;
+DROP POLICY IF EXISTS "Allow admin insert on contact" ON contact;
 DROP POLICY IF EXISTS "Allow admin update on contact" ON contact;
 CREATE POLICY "Allow public select on contact" ON contact FOR SELECT USING (true);
+CREATE POLICY "Allow admin insert on contact" ON contact FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow admin update on contact" ON contact FOR UPDATE USING (true);
 
 -- 6. PHOTOS Policies

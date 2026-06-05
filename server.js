@@ -15,10 +15,19 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'parihar1990';
 // Initialize Supabase connection
 db.initSupabase();
 
+// Check if running in a serverless environment (Netlify)
+const isServerless = !!(process.env.NETLIFY || process.env.LAMBDA_TASK_ROOT || process.env.FUNCTIONS_SIGNATURE);
+const uploadDir = isServerless 
+  ? '/tmp' 
+  : path.join(__dirname, 'public', 'uploads');
+
 // Ensure upload directory exists
-const uploadDir = path.join(__dirname, 'public', 'uploads');
-if (!fsSync.existsSync(uploadDir)) {
-  fsSync.mkdirSync(uploadDir, { recursive: true });
+try {
+  if (!fsSync.existsSync(uploadDir)) {
+    fsSync.mkdirSync(uploadDir, { recursive: true });
+  }
+} catch (err) {
+  console.warn('⚠️ Warning: Could not create upload directory:', err.message);
 }
 
 // Multer Storage Configuration
@@ -110,13 +119,54 @@ app.post('/api/auth/login', (req, res) => {
 });
 
 // 2. POST /api/upload - Secure Image Upload Endpoint (secured)
-app.post('/api/upload', requireAdminAuth, upload.array('files', 10), (req, res) => {
+app.post('/api/upload', requireAdminAuth, upload.array('files', 10), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ error: 'No files were uploaded.' });
     }
-    const filePaths = req.files.map(file => `/uploads/${file.filename}`);
-    res.status(201).json({ urls: filePaths });
+
+    const uploadedUrls = [];
+
+    if (db.isOnline()) {
+      for (const file of req.files) {
+        try {
+          const fileBuffer = await fs.readFile(file.path);
+          const { data, error } = await db.getSupabase().storage
+            .from('uploads')
+            .upload(file.filename, fileBuffer, {
+              contentType: file.mimetype,
+              upsert: true
+            });
+          
+          if (!error) {
+            const { data: urlData } = db.getSupabase().storage
+              .from('uploads')
+              .getPublicUrl(file.filename);
+            uploadedUrls.push(urlData.publicUrl);
+            
+            // Clean up the local temp file since it is in Supabase storage now
+            try {
+              await fs.unlink(file.path);
+            } catch (unlinkErr) {
+              console.warn('Failed to clean up temp file:', unlinkErr.message);
+            }
+          } else {
+            console.warn(`Supabase storage upload failed for ${file.filename}:`, error.message);
+            uploadedUrls.push(`/uploads/${file.filename}`);
+          }
+        } catch (uploadErr) {
+          console.error(`Error uploading ${file.filename} to Supabase storage:`, uploadErr.message);
+          uploadedUrls.push(`/uploads/${file.filename}`);
+        }
+      }
+    } else {
+      // Offline fallback: Use the local file paths
+      req.files.forEach(file => {
+        uploadedUrls.push(`/uploads/${file.filename}`);
+      });
+    }
+
+    res.status(201).json({ urls: uploadedUrls });
   } catch (error) {
     console.error('File upload error:', error);
     res.status(500).json({ error: 'Failed to process file uploads.' });
@@ -768,6 +818,26 @@ app.delete('/api/reviews/:id', requireAdminAuth, async (req, res) => {
 // ============================================
 // FRONTEND ROUTING FALLBACK & SERVER START
 // ============================================
+
+// Serve uploads from local disk or /tmp in serverless
+app.get('/uploads/:filename', async (req, res) => {
+  const filename = req.params.filename;
+  // Prevent directory traversal
+  if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+    return res.status(400).json({ error: 'Invalid file name.' });
+  }
+  const filePath = path.join(uploadDir, filename);
+  try {
+    if (fsSync.existsSync(filePath)) {
+      res.sendFile(filePath);
+    } else {
+      res.status(404).json({ error: 'File not found.' });
+    }
+  } catch (error) {
+    console.error('Error serving file:', error);
+    res.status(500).json({ error: 'Error serving file.' });
+  }
+});
 
 // Serve frontend routing fallback
 app.get('*', (req, res) => {

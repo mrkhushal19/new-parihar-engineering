@@ -61,6 +61,16 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 
+// Middleware to ensure database connection is initialized before handling requests
+app.use(async (req, res, next) => {
+  try {
+    await db.initSupabase();
+  } catch (err) {
+    console.error('Failed to initialize Supabase in middleware:', err.message);
+  }
+  next();
+});
+
 // Static files directory
 app.use(express.static(path.join(__dirname, 'public')));
 

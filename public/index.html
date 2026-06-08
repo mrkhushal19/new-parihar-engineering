@@ -16,8 +16,8 @@
 <body>
 
   <!-- Top Announcement Bar -->
-  <div style="background-color: var(--accent); color: #0b0f19; font-size: 0.85rem; font-weight: 600; padding: 6px 0; text-align: center;">
-    <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+  <div class="announcement-bar">
+    <div class="container announcement-container">
       <span id="top-bar-address"><i class="fa-solid fa-location-dot"></i> Jodhpur, Rajasthan, India</span>
       <span id="top-bar-gst"><i class="fa-solid fa-file-invoice-dollar"></i> GSTIN: 08**********1Z5</span>
       <span id="top-bar-phone"><i class="fa-solid fa-phone"></i> Call R Parihar (Owner): +91 98290 85934</span>
@@ -46,7 +46,7 @@
         </ul>
       </nav>
       <div class="header-actions">
-        <a href="tel:+919829085934" id="header-call-btn" class="btn btn-primary btn-pulse"><i class="fa-solid fa-phone"></i> Call Now</a>
+        <a href="tel:+919829085934" id="header-call-btn" class="btn btn-primary btn-pulse"><i class="fa-solid fa-phone"></i> <span class="call-btn-text">Call Now</span></a>
         <button class="mobile-toggle"><i class="fa-solid fa-bars"></i></button>
       </div>
     </div>
@@ -70,7 +70,7 @@
             <div class="badge-item"><i class="fa-solid fa-gears"></i> Heavy Machining Facility</div>
           </div>
 
-          <div style="display: flex; gap: 16px;">
+          <div class="hero-actions-container">
             <button class="btn btn-primary" onclick="switchTab('products')"><i class="fa-solid fa-industry"></i> Explore Products</button>
             <button class="btn btn-secondary" onclick="switchTab('contact')"><i class="fa-solid fa-envelope"></i> Send Inquiry</button>
           </div>

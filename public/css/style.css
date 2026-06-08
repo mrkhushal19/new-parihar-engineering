@@ -2230,3 +2230,359 @@ footer {
   height: 100%;
   object-fit: cover;
 }
+
+/* --- MOBILE & ANDROID RESPONSIVENESS OVERRIDES --- */
+
+/* Base Announcement Bar Styles on Desktop */
+.announcement-bar {
+  background-color: var(--accent);
+  color: #0b0f19;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 6px 0;
+  text-align: center;
+}
+
+.announcement-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Hero Actions Container Default */
+.hero-actions-container {
+  display: flex;
+  gap: 16px;
+}
+
+/* Media Query overrides for large mobile / tablets */
+@media (max-width: 768px) {
+  /* Navigation Menu Drawer styling overrides */
+  nav {
+    position: absolute;
+    top: var(--header-height);
+    left: 0;
+    width: 100%;
+    background-color: rgba(17, 24, 39, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1.5px solid var(--border-color);
+    padding: 20px 24px;
+    z-index: 100;
+    /* Clean transition */
+    display: none;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  /* When JS sets display: block inline, enforce style correctly */
+  nav[style*="display: block"] {
+    display: block !important;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .nav-links li {
+    width: 100%;
+  }
+
+  .nav-links li a {
+    display: block;
+    padding: 12px 16px;
+    border-radius: 6px;
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .nav-links li a.active {
+    border-bottom: none;
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding-left: 13px;
+    background-color: rgba(245, 158, 11, 0.08);
+  }
+
+  /* Horizontal category selector on mobile */
+  .category-list {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    padding-bottom: 12px !important;
+    gap: 8px !important;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .category-list::-webkit-scrollbar {
+    height: 4px;
+  }
+  .category-list::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .category-list::-webkit-scrollbar-thumb {
+    background-color: var(--accent-border);
+    border-radius: 2px;
+  }
+
+  .category-btn {
+    display: inline-flex !important;
+    align-items: center;
+    flex-shrink: 0 !important;
+    padding: 8px 14px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Video player modal close button adjustment */
+  .close-video-modal {
+    top: 10px;
+    right: 10px;
+    background-color: rgba(11, 15, 25, 0.8);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--border-color);
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    z-index: 10;
+  }
+  
+  /* Admin Panel adjustments */
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 16px;
+  }
+
+  .admin-main {
+    padding: 24px 16px;
+  }
+
+  .admin-stats-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .admin-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .admin-title-row .btn {
+    width: 100%;
+  }
+
+  /* Admin Table Horizontal Scrolling */
+  .admin-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-table {
+    min-width: 800px; /* Force minimum width to enable horizontal scroll and prevent squishing */
+  }
+}
+
+/* Media Query overrides for mobile / phones */
+@media (max-width: 576px) {
+  #top-bar-gst {
+    display: none; /* Hide GST on mobile announcement bar */
+  }
+
+  .announcement-container {
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+/* Media Query overrides for narrow phones (Android, iPhone SE etc.) */
+@media (max-width: 480px) {
+  .container {
+    padding: 0 16px; /* Reduced container padding to maximize screen width */
+  }
+
+  .section-padding {
+    padding: 48px 0;
+  }
+
+  /* Header adjustments */
+  :root {
+    --header-height: 70px;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.3rem;
+    border-radius: 6px;
+  }
+
+  .logo-text h1 {
+    font-size: 1.15rem;
+  }
+
+  .logo-text span {
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+  }
+
+  .header-actions {
+    gap: 8px;
+  }
+
+  #header-call-btn {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+
+  /* Hero Section adjustments */
+  .hero {
+    padding: 60px 0 48px 0;
+  }
+
+  .hero-text h2 {
+    font-size: 1.8rem;
+    line-height: 1.2;
+  }
+
+  .hero-text p {
+    font-size: 1rem;
+    margin-bottom: 24px;
+  }
+
+  .hero-actions-container {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .hero-actions-container .btn {
+    width: 100%;
+  }
+
+  .hero-card {
+    padding: 20px;
+  }
+
+  .meta-value {
+    font-size: 1.1rem;
+  }
+
+  .meta-value span.highlight {
+    font-size: 1.3rem;
+  }
+
+  /* Stats grid adjustment */
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .stat-card {
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 16px;
+  }
+
+  .stat-card:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+  }
+
+  /* Products filter tweaks */
+  .filters-sidebar {
+    padding: 16px;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+  }
+
+  .product-actions .btn {
+    padding: 8px 4px;
+    font-size: 0.8rem;
+    gap: 4px;
+  }
+
+  /* Detail Modals adjustments */
+  .detail-modal {
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  .detail-modal-header {
+    padding: 16px;
+  }
+
+  .detail-modal-content {
+    padding: 16px;
+  }
+
+  .detail-modal-footer {
+    padding: 16px;
+    background-color: var(--bg-card);
+  }
+
+  .modal-info-col h3 {
+    font-size: 1.2rem;
+  }
+
+  .modal-description {
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
+
+  .modal-specs-table td {
+    padding: 6px 8px;
+    font-size: 0.8rem;
+  }
+
+  /* General forms responsive adjustments */
+  .review-form-card {
+    padding: 20px;
+  }
+
+  .form-title {
+    font-size: 1.15rem;
+  }
+}
+
+/* Call Button adjustments for extremely narrow viewports (<= 380px) */
+@media (max-width: 380px) {
+  .call-btn-text {
+    display: none; /* Hide the text, show only phone icon */
+  }
+
+  #header-call-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #header-call-btn i {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+}
+

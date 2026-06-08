@@ -1,4 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
+const ws = require('ws');
 
 let supabase = null;
 let online = false;
@@ -21,6 +22,9 @@ async function initSupabase() {
 
     try {
       supabase = createClient(url, key, {
+        realtime: {
+          transport: ws
+        },
         global: {
           fetch: (fetchUrl, options = {}) => {
             return fetch(fetchUrl, {

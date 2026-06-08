@@ -24,14 +24,6 @@ async function initSupabase() {
       supabase = createClient(url, key, {
         realtime: {
           transport: ws
-        },
-        global: {
-          fetch: (fetchUrl, options = {}) => {
-            return fetch(fetchUrl, {
-              ...options,
-              signal: AbortSignal.timeout(15000)
-            });
-          }
         }
       });
       online = true;

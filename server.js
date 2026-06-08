@@ -152,6 +152,19 @@ app.post('/api/auth/login', (req, res) => {
   res.status(401).json({ error: 'Incorrect password.' });
 });
 
+// Temporary Diagnostic Route to debug environment variables in production
+app.get('/api/debug-env', (req, res) => {
+  res.json({
+    SUPABASE_URL_exists: !!process.env.SUPABASE_URL,
+    SUPABASE_URL_val: process.env.SUPABASE_URL || 'not set',
+    SUPABASE_KEY_exists: !!process.env.SUPABASE_KEY,
+    SUPABASE_KEY_length: process.env.SUPABASE_KEY ? process.env.SUPABASE_KEY.length : 0,
+    isOnline: db.isOnline(),
+    isServerless: isServerless,
+    env_keys: Object.keys(process.env).filter(k => k.toUpperCase().includes('SUPABASE') || k.toUpperCase().includes('DATABASE') || k.toUpperCase().includes('URL') || k.toUpperCase().includes('KEY'))
+  });
+});
+
 // 2. POST /api/upload - Secure Image Upload Endpoint (secured)
 app.post('/api/upload', requireAdminAuth, upload.array('files', 10), async (req, res) => {
   try {

@@ -160,6 +160,7 @@ app.get('/api/debug-env', (req, res) => {
     SUPABASE_KEY_exists: !!process.env.SUPABASE_KEY,
     SUPABASE_KEY_length: process.env.SUPABASE_KEY ? process.env.SUPABASE_KEY.length : 0,
     isOnline: db.isOnline(),
+    initError: db.getInitError ? db.getInitError() : 'unknown method',
     isServerless: isServerless,
     env_keys: Object.keys(process.env).filter(k => k.toUpperCase().includes('SUPABASE') || k.toUpperCase().includes('DATABASE') || k.toUpperCase().includes('URL') || k.toUpperCase().includes('KEY'))
   });

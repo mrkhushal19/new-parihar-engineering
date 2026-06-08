@@ -3,6 +3,7 @@ const { createClient } = require('@supabase/supabase-js');
 let supabase = null;
 let online = false;
 let initPromise = null;
+let initError = null;
 
 async function initSupabase() {
   if (initPromise) return initPromise;
@@ -12,7 +13,9 @@ async function initSupabase() {
     const key = process.env.SUPABASE_KEY;
 
     if (!url || !key || url.includes('your-project-id') || key.includes('your-anon-key')) {
-      console.warn('\n⚠️  [Supabase] Credentials not configured — running in OFFLINE mode (local JSON files)');
+      const warnMsg = 'Credentials not configured or contain placeholder text';
+      console.warn(`\n⚠️  [Supabase] ${warnMsg} — running in OFFLINE mode (local JSON files)`);
+      initError = warnMsg;
       return;
     }
 
@@ -28,11 +31,13 @@ async function initSupabase() {
         }
       });
       online = true;
+      initError = null;
       console.log(`✅ [Supabase] Client initialized successfully — ONLINE mode: ${url}`);
     } catch (error) {
       supabase = null;
       online = false;
       initPromise = null; // Clear promise to allow connection retry on next request
+      initError = error.message;
       console.warn(`\n⚠️  [Supabase] Client initialization failed: ${error.message} — falling back to OFFLINE mode\n`);
     }
   })();
@@ -43,5 +48,6 @@ async function initSupabase() {
 module.exports = {
   initSupabase,
   getSupabase: () => supabase,
-  isOnline: () => online
+  isOnline: () => online,
+  getInitError: () => initError
 };
